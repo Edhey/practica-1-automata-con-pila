@@ -1,0 +1,42 @@
+# Build process:
+#   1. cd <project_folder>
+#   2. mkdir build
+#   3. cd build
+#   4. cmake -DCMAKE_BUILD_TYPE=Debug .. or cmake -DCMAKE_BUILD_TYPE=Release ..
+#   5. make
+
+cmake_minimum_required(VERSION 3.20)  # For C++23 support
+
+# Set compiler before project() declaration
+set(CMAKE_CXX_COMPILER "/usr/bin/g++-13")    # Use g++-13
+
+# set the project name 
+project(stack-automaton-main               # Mandatory
+    VERSION 1.0
+    DESCRIPTION "stack-automaton problem"
+    LANGUAGES CXX)
+
+# specify the C++ standard
+set(CMAKE_CXX_STANDARD 23) 						# Use c++23
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+# tell cmake to output binaries here:
+set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/build)
+
+# Debug and release flags
+set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 -Wall -Wextra -Wpedantic -Weffc++")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+
+# tell cmake where to look for *.h files
+include_directories(${PROJECT_SOURCE_DIR}/include)
+
+# Automatically add all .cc files
+file(GLOB_RECURSE ALL_CC_FILES "${PROJECT_SOURCE_DIR}/src/*.cc")
+
+add_executable(stack-automaton-main ${ALL_CC_FILES})
+
+# Add expected compiler features to a target.
+target_compile_features(stack-automaton-main PRIVATE cxx_std_23)
+
+# Add compile options to a target.
+target_compile_options(stack-automaton-main PRIVATE -Wall -Wextra -Wpedantic -Weffc++)
