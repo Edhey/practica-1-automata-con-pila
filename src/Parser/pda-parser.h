@@ -8,25 +8,78 @@
  * @author Himar Edhey Hernández Alonso
  * Correo: alu0101552392@ull.edu.es
  * @date Sep 15 2025
- * @file state.h
- * @brief Definition of
+ * @file pda-parser.h
+ * @brief Definition of the class PdaParser
  * @bug There are no known bugs
- * @see
- * Historial de revisiones:
+ * @see https://github.com/Edhey/practica-1-automata-con-pila.git
+ * Revision history:
  */
 
 #ifndef PARSER_PDA_PARSER_H_
 #define PARSER_PDA_PARSER_H_
 
-#include <ostream>
 #include <fstream>
+#include <ostream>
+#include <set>
+#include <sstream>
+#include <string>
+#include <vector>
+#include <expected>
 
-class PdaParser {
- public:
-  PdaParser(const std::string& file_name);
-  ~PdaParser();
- private:
-  
+#include "../State/state.h"
+#include "../Automata/PDA/pda.h"
+
+/**
+ * @brief Estructura para almacenar los datos parseados del autómata
+ */
+struct PdaData {
+  std::set<char> input_alphabet;
+  std::set<char> stack_alphabet;
+  char initial_stack_symbol;
+  State initial_state;
+  std::vector<State> states;
+  // ! std::vector<State> final_states;
+  std::vector<PDATransition> transitions;
 };
 
-#endif // PARSER_PDA_PARSER_H_
+/**
+ * @brief Tipo de error para el parser
+ */
+struct ParseError {
+  std::string message;
+  int line_number;
+
+  ParseError(const std::string& msg, int line = 0)
+      : message(msg), line_number(line) {}
+};
+
+/**
+ * @brief Clase para parsear archivos de definición de APf
+ */
+class PdaParser {
+public:
+  explicit PdaParser(const std::string& file_name);
+  ~PdaParser() = default;
+
+   std::expected<PdaData, ParseError> parse();
+
+private:
+  std::string file_name_;
+
+  /**
+   * @brief Ignora líneas de comentarios (que empiezan con #)
+   * @param ifs Stream del archivo
+   * @param line String donde se guardará la línea leída
+   * @return true si se leyó una línea válida, false si llegó al EOF
+   */
+  bool readNonCommentLine(std::ifstream& ifs, std::string& line);
+
+  /**
+   * @brief Divide una línea en tokens separados por espacios
+   * @param line Línea a dividir
+   * @return Vector de tokens
+   */
+  std::vector<std::string> tokenize(const std::string& line);
+};
+
+#endif  // PARSER_PDA_PARSER_H_

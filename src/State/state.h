@@ -11,8 +11,8 @@
  * @file state.h
  * @brief Definition of the class State
  * @bug There are no known bugs
- * @see
- * Historial de revisiones:
+ * @see https://github.com/Edhey/practica-1-automata-con-pila.git
+ * Revision history:
  */
 
 #ifndef STATE_H
@@ -21,16 +21,21 @@
 #include <iostream>
 
 class State {
- public:
-  State() = default;
-  explicit State(const std::string& name) : name_(name) {}
+public:
+  State(const std::string& name, bool is_final = false, bool is_initial = false)
+      : name_(name), is_final_(is_final), is_initial_(is_initial) {}
   ~State() = default;
 
-  std::string getName() const { return name_; }
-  void setName(const std::string& name) { name_ = name; }
+  const std::string& getName() const { return name_; }
 
- private:
+  bool operator<(const State& other) const { return name_ < other.name_; }
+
+  bool operator==(const State& other) const { return name_ == other.name_; }
+
+private:
   std::string name_;
+  bool is_final_ = false;
+  bool is_initial_ = false;
 };
 
-#endif
+#endif // STATE_H
