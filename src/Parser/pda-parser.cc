@@ -75,3 +75,162 @@ std::vector<std::string> PdaParser::tokenize(const std::string& line) {
 bool PdaParser::isEpsilonInChain(const std::string& line) {
   return line.find(PDA::EPSILON) != std::string::npos;
 }
+
+std::expected<
+    std::map<std::string, State<PDATransitionKey, PDATransitionValue>>,
+    ParseError>
+PdaParser::parseStates(std::ifstream& file, int& line_number) {
+  std::string line;
+  if (!readNonCommentLine(file, line)) {
+    return std::unexpected(
+        ParseError("Error: Missing states definition", line_number));
+  }
+  line_number++;
+
+  std::map<std::string, State<PDATransitionKey, PDATransitionValue>> states;
+  for (const auto& token : tokenize(line)) {
+    auto result = states.insert(
+        {token, State<PDATransitionKey, PDATransitionValue>(token)});
+    if (!result.second) {
+      std::cerr << "Warning: Duplicate state '" << token << "' at line "
+                << line_number << std::endl;
+    }
+  }
+  return states;
+}
+
+std::expected<Alphabet<char>, ParseError> PdaParser::parseInputAlphabet(
+    std::ifstream& file, int& line_number) {
+  std::string line;
+  if (!readNonCommentLine(file, line)) {
+    return std::unexpected(
+        ParseError("Error: Missing input alphabet definition", line_number));
+  }
+  line_number++;
+
+  Alphabet<char> alphabet;
+  for (const auto& token : tokenize(line)) {
+    if (token.size() != 1) {
+      return std::unexpected(
+          ParseError("Error: Input alphabet symbols must be single characters",
+                     line_number));
+    }
+    alphabet.addSymbol(token[0]);
+  }
+  return alphabet;
+}
+
+std::expected<Alphabet<char>, ParseError> PdaParser::parseStackAlphabet(
+    std::ifstream& file, int& line_number) {
+  std::string line;
+  if (!readNonCommentLine(file, line)) {
+    return std::unexpected(
+        ParseError("Error: Missing stack alphabet definition", line_number));
+  }
+  line_number++;
+
+  Alphabet<char> alphabet;
+  for (const auto& token : tokenize(line)) {
+    if (token.size() != 1) {
+      return std::unexpected(
+          ParseError("Error: Stack alphabet symbols must be single characters",
+                     line_number));
+    }
+    alphabet.addSymbol(token[0]);
+  }
+
+  return alphabet;
+}
+
+std::expected<char, ParseError> PdaParser::parseInitialStackSymbol(
+    std::ifstream& file, int& line_number) {
+  std::string line;
+  if (!readNonCommentLine(file, line)) {
+    return std::unexpected(ParseError(
+        "Error: Missing initial stack symbol definition", line_number));
+  }
+  line_number++;
+
+  auto tokens = tokenize(line);
+  if (tokens.size() != 1 || tokens[0].size() != 1) {
+    return std::unexpected(ParseError(
+        "Error: Initial stack symbol must be a single character", line_number));
+  }
+
+  return tokens[0][0];
+}
+
+std::expected<State<PDATransitionKey, PDATransitionValue>, ParseError>
+PdaParser::parseInitialState(
+    std::ifstream& file, int& line_number,
+    const std::map<std::string, State<PDATransitionKey, PDATransitionValue>>&
+        states) {
+  std::string line;
+  if (!readNonCommentLine(file, line)) {
+    return std::unexpected(
+        ParseError("Error: Missing initial state definition", line_number));
+  }
+  line_number++;
+
+  auto tokens = tokenize(line);
+  if (tokens.size() != 1) {
+    return std::unexpected(ParseError(
+        "Error: Initial state must be a single state ID", line_number));
+  }
+
+  auto initial_state = states.find(tokens[0]);
+  if (initial_state == states.end()) {
+    return std::unexpected(ParseError(
+        "Error: Initial state '" + tokens[0] + "' not defined", line_number));
+  }
+
+  return initial_state->second;
+}
+
+std::expected<void, ParseError> PdaParser::parseTransitions(
+    std::ifstream& file, int& line_number,
+    std::map<std::string, State<PDATransitionKey, PDATransitionValue>>&
+        states) {
+  std::string line;
+  while (readNonCommentLine(file, line)) {
+    line_number++;
+    auto tokens = tokenize(line);
+
+    if (tokens.size() != 5) {
+      return std::unexpected(ParseError(
+          "Error: PDA Transitions must have 5 components", line_number));
+    }
+
+    const std::string& current_state_id = tokens[0];
+    char input_symbol = tokens[1][0];
+    char stack_top = tokens[2][0];
+    const std::string& next_state_id = tokens[3];
+    const std::string& push_string = tokens[4];
+
+    if (tokens[1].size() != 1 || tokens[2].size() != 1) {
+      return std::unexpected(ParseError(
+          "Error: Input symbol and stack top must be single characters",
+          line_number));
+    }
+
+    auto current_state_it = states.find(current_state_id);
+    if (current_state_it == states.end()) {
+      return std::unexpected(ParseError(
+          "Error: Current state '" + current_state_id + "' not defined",
+          line_number));
+    }
+
+    if (!states.contains(next_state_id)) {
+      return std::unexpected(
+          ParseError("Error: Next state '" + next_state_id + "' not defined",
+                     line_number));
+    }
+
+    PDATransitionKey key{input_symbol, stack_top};
+    PDATransitionValue value{next_state_id, push_string};
+
+    current_state_it->second.addTransition(key, value);
+  }
+
+  return {};
+}

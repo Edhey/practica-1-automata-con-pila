@@ -38,7 +38,7 @@ struct PdaData {
   Alphabet<char> stack_alphabet;
   char initial_stack_symbol;
   State<PDATransitionKey, PDATransitionValue> initial_state;
-  std::map<std::string, State<PDATransitionKey, PDATransitionValue>> states;
+  std::set<State<PDATransitionKey, PDATransitionValue>> states;
   // ! std::vector<State> final_states;
 };
 
@@ -67,6 +67,25 @@ protected:
   bool readNonCommentLine(std::ifstream& ifs, std::string& line);
   std::vector<std::string> tokenize(const std::string& line);
   bool isEpsilonInChain(const std::string& line);
+  std::expected<
+      std::map<std::string, State<PDATransitionKey, PDATransitionValue>>,
+      ParseError>
+  parseStates(std::ifstream& file, int& line_number);
+  std::expected<Alphabet<char>, ParseError> parseInputAlphabet(
+      std::ifstream& file, int& line_number);
+  std::expected<Alphabet<char>, ParseError> parseStackAlphabet(
+      std::ifstream& file, int& line_number);
+  std::expected<char, ParseError> parseInitialStackSymbol(std::ifstream& file,
+                                                          int& line_number);
+  std::expected<State<PDATransitionKey, PDATransitionValue>, ParseError>
+  parseInitialState(
+      std::ifstream& file, int& line_number,
+      const std::map<std::string, State<PDATransitionKey, PDATransitionValue>>&
+          states);
+  std::expected<void, ParseError> parseTransitions(
+      std::ifstream& file, int& line_number,
+      std::map<std::string, State<PDATransitionKey, PDATransitionValue>>&
+          states);
 };
 
 #endif  // PARSER_PDA_PARSER_H_
