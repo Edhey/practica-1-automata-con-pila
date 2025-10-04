@@ -22,21 +22,24 @@
 #include <string>
 
 #include "../State/state.h"
+#include "../Alphabet/alphabet.h"
 
 /**
  * @brief Abstract class for automata (automaton interface)
  */
+template <typename KeyType, typename ValueType>
 class Automata {
 public:
   virtual ~Automata() = default;
   virtual bool isAccepted(const std::string& input) = 0;
+  static constexpr char EPSILON = '.';
 
 protected:
   // State current_state;
-  State initial_state;
-  std::set<State> states;
-  std::set<char> input_alphabet;
-  static constexpr char EPSILON = '.';
+  State<KeyType, ValueType> initial_state;
+  std::set<State<KeyType, ValueType>> states;
+  // std::map<std::string, State<KeyType, ValueType>> states;
+  Alphabet<char> input_alphabet;
 };
 
 #endif  // AUTOMATA_H

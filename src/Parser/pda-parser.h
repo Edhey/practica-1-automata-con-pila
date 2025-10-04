@@ -18,28 +18,28 @@
 #ifndef PARSER_PDA_PARSER_H_
 #define PARSER_PDA_PARSER_H_
 
+#include <expected>
 #include <fstream>
 #include <ostream>
 #include <set>
 #include <sstream>
 #include <string>
 #include <vector>
-#include <expected>
 
-#include "../State/state.h"
+#include "../Alphabet/alphabet.h"
 #include "../Automata/PDA/pda.h"
+#include "../State/state.h"
 
 /**
  * @brief Estructura para almacenar los datos parseados del autómata
  */
 struct PdaData {
-  std::set<char> input_alphabet;
-  std::set<char> stack_alphabet;
+  Alphabet<char> input_alphabet;
+  Alphabet<char> stack_alphabet;
   char initial_stack_symbol;
-  State initial_state;
-  std::vector<State> states;
+  State<PDATransitionKey, PDATransitionValue> initial_state;
+  std::map<std::string, State<PDATransitionKey, PDATransitionValue>> states;
   // ! std::vector<State> final_states;
-  std::vector<PDATransition> transitions;
 };
 
 /**
@@ -60,26 +60,13 @@ class PdaParser {
 public:
   explicit PdaParser(const std::string& file_name);
   ~PdaParser() = default;
+  virtual std::expected<PdaData, ParseError> parse();
 
-   std::expected<PdaData, ParseError> parse();
-
-private:
+protected:
   std::string file_name_;
-
-  /**
-   * @brief Ignora líneas de comentarios (que empiezan con #)
-   * @param ifs Stream del archivo
-   * @param line String donde se guardará la línea leída
-   * @return true si se leyó una línea válida, false si llegó al EOF
-   */
   bool readNonCommentLine(std::ifstream& ifs, std::string& line);
-
-  /**
-   * @brief Divide una línea en tokens separados por espacios
-   * @param line Línea a dividir
-   * @return Vector de tokens
-   */
   std::vector<std::string> tokenize(const std::string& line);
+  bool isEpsilonInChain(const std::string& line);
 };
 
 #endif  // PARSER_PDA_PARSER_H_

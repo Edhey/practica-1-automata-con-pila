@@ -1,130 +1,147 @@
-PdaData PdaParser::parse() {
+/**
+ * Universidad de La Laguna
+ * Escuela Superior de Ingeniería y Tecnología
+ * Grado en Ingeniería Informática
+ * Asignatura: Complejidad Computacional
+ * Curso: 4º
+ * Práctica 1: Pushdown Automaton Simulator
+ * @author Himar Edhey Hernández Alonso
+ * Correo: alu0101552392@ull.edu.es
+ * @date Sep 15 2025
+ * @file pdaes-parser.cc
+ * @brief Implementation of the PdaESParser class
+ * @bug There are no known bugs
+ * @see https://github.com/Edhey/practica-1-automata-con-pila.git
+ * Revision history:
+ */
+
+#include "pdaes-parser.h"
+std::expected<PdaData, ParseError> PdaESParser::parse() {
   std::ifstream file(file_name_);
   if (!file.is_open()) {
-    throw std::runtime_error("Error: No se pudo abrir el archivo " +
-                             file_name_);
+    return std::unexpected(
+        ParseError("Error: Could not open file " + file_name_));
   }
 
   PdaData data;
   std::string line;
   int line_number = 0;
 
-  try {
-    // 1. Leer estados
-    if (!readNonCommentLine(file, line)) {
-      throw std::runtime_error("Error: Archivo vacío o sin estados");
+  // Read states
+  if (!readNonCommentLine(file, line)) {
+    return std::unexpected(
+        ParseError("Error: Missing states definition", line_number));
+  }
+  line_number++;
+  for (const auto& token : tokenize(line)) {
+    auto result = data.states.insert(
+        {token, State<PDATransitionKey, PDATransitionValue>(token)});
+    if (!result.second) {
+      std::cerr << "Warning: Duplicate state '" << token << "' found at line "
+                << line_number << std::endl;
     }
+  }
+
+  // Read input alphabet
+  if (!readNonCommentLine(file, line)) {
+    return std::unexpected(
+        ParseError("Error: Missing input alphabet definition", line_number));
+  }
+  line_number++;
+  for (const auto& token : tokenize(line)) {
+    if (token.size() != 1) {
+      return std::unexpected(
+          ParseError("Error: Input alphabet symbols must be single characters",
+                     line_number));
+    }
+    data.input_alphabet.addSymbol(token[0]);
+  }
+
+  // Read stack alphabet
+  if (!readNonCommentLine(file, line)) {
+    return std::unexpected(
+        ParseError("Error: Missing stack alphabet definition", line_number));
+  }
+  line_number++;
+  for (const auto& token : tokenize(line)) {
+    if (token.size() != 1) {
+      return std::unexpected(
+          ParseError("Error: Stack alphabet symbols must be single characters",
+                     line_number));
+    }
+    data.stack_alphabet.addSymbol(token[0]);
+  }
+
+  // Read initial stack symbol
+  if (!readNonCommentLine(file, line)) {
+    return std::unexpected(ParseError(
+        "Error: Missing initial stack symbol definition", line_number));
+  }
+  line_number++;
+  auto tokens = tokenize(line);
+  if (tokens.size() != 1 || tokens[0].size() != 1) {
+    return std::unexpected(ParseError(
+        "Error: Initial stack symbol must be a single character", line_number));
+  }
+  data.initial_stack_symbol = tokens[0][0];
+
+  // Read initial state
+  if (!readNonCommentLine(file, line)) {
+    return std::unexpected(
+        ParseError("Error: Missing initial state definition", line_number));
+  }
+  line_number++;
+  tokens = tokenize(line);
+  if (tokens.size() != 1) {
+    return std::unexpected(ParseError(
+        "Error: Initial state must be a single state ID", line_number));
+  }
+  auto initial_state = data.states.find(tokens[0]);
+  if (initial_state == data.states.end()) {
+    return std::unexpected(ParseError(
+        "Error: Initial state '" + tokens[0] + "' not defined", line_number));
+  }
+  data.initial_state = initial_state->second;
+
+  // Read transitions
+  while (readNonCommentLine(file, line)) {
     line_number++;
-    data.states = tokenize(line);
-    if (data.states.empty()) {
-      throw std::runtime_error("Error línea " + std::to_string(line_number) +
-                               ": No se encontraron estados");
+    tokens = tokenize(line);
+    if (tokens.size() != 5) {
+      return std::unexpected(
+          ParseError("Error: Transition must have 5 components", line_number));
     }
+    const std::string& current_state_id = tokens[0];
+    char input_symbol = tokens[1][0];
+    char stack_top = tokens[2][0];
+    const std::string& next_state_id = tokens[3];
+    const std::string& push_string = tokens[4];
+    if (tokens[1].size() != 1 || tokens[2].size() != 1) {
+      return std::unexpected(ParseError(
+          "Error: Input symbol and stack top must be single characters",
+          line_number));
+    }
+    auto current_state_it = data.states.find(current_state_id);
+    if (current_state_it == data.states.end()) {
+      return std::unexpected(ParseError(
+          "Error: Current state '" + current_state_id + "' not defined",
+          line_number));
+    }
+    if (!data.states.contains(next_state_id)) {
+      return std::unexpected(
+          ParseError("Error: Next state '" + next_state_id + "' not defined",
+                     line_number));
+    }
+    PDATransitionKey key{input_symbol, stack_top};
+    PDATransitionValue value{next_state_id, push_string};
+    State<PDATransitionKey, PDATransitionValue>& state =
+        current_state_it->second;
+    state.addTransition(key, value);
+  }
 
-    // 2. Leer alfabeto de entrada
-    if (!readNonCommentLine(file, line)) {
-      throw std::runtime_error("Error: Falta alfabeto de entrada");
-    }
-    line_number++;
-    auto input_tokens = tokenize(line);
-    for (const auto& token : input_tokens) {
-      if (token.length() != 1) {
-        throw std::runtime_error(
-            "Error línea " + std::to_string(line_number) +
-            ": Los símbolos del alfabeto deben ser de un carácter");
-      }
-      data.input_alphabet.push_back(token[0]);
-    }
-
-    // 3. Leer alfabeto de pila
-    if (!readNonCommentLine(file, line)) {
-      throw std::runtime_error("Error: Falta alfabeto de pila");
-    }
-    line_number++;
-    auto stack_tokens = tokenize(line);
-    for (const auto& token : stack_tokens) {
-      if (token.length() != 1) {
-        throw std::runtime_error(
-            "Error línea " + std::to_string(line_number) +
-            ": Los símbolos del alfabeto de pila deben ser de un carácter");
-      }
-      data.stack_alphabet.push_back(token[0]);
-    }
-
-    // 4. Leer estado inicial
-    if (!readNonCommentLine(file, line)) {
-      throw std::runtime_error("Error: Falta estado inicial");
-    }
-    line_number++;
-    auto initial_tokens = tokenize(line);
-    if (initial_tokens.size() != 1) {
-      throw std::runtime_error("Error línea " + std::to_string(line_number) +
-                               ": Debe haber exactamente un estado inicial");
-    }
-    data.initial_state = initial_tokens[0];
-
-    // 5. Leer símbolo inicial de pila
-    if (!readNonCommentLine(file, line)) {
-      throw std::runtime_error("Error: Falta símbolo inicial de pila");
-    }
-    line_number++;
-    auto initial_stack_tokens = tokenize(line);
-    if (initial_stack_tokens.size() != 1 ||
-        initial_stack_tokens[0].length() != 1) {
-      throw std::runtime_error(
-          "Error línea " + std::to_string(line_number) +
-          ": Debe haber exactamente un símbolo inicial de pila");
-    }
-    data.initial_stack_symbol = initial_stack_tokens[0][0];
-
-    // 6. Leer estados finales
-    if (!readNonCommentLine(file, line)) {
-      throw std::runtime_error("Error: Faltan estados finales");
-    }
-    line_number++;
-    data.final_states = tokenize(line);
-    if (data.final_states.empty()) {
-      throw std::runtime_error("Error línea " + std::to_string(line_number) +
-                               ": Debe haber al menos un estado final");
-    }
-
-    // 7. Leer transiciones
-    while (readNonCommentLine(file, line)) {
-      line_number++;
-      auto tokens = tokenize(line);
-
-      if (tokens.size() != 5) {
-        throw std::runtime_error(
-            "Error línea " + std::to_string(line_number) +
-            ": Formato de transición incorrecto. " +
-            "Formato esperado: estado_actual símbolo_entrada tope_pila "
-            "estado_siguiente cadena_a_apilar");
-      }
-
-      PdaData::Transition transition;
-      transition.current_state = tokens[0];
-      transition.input_symbol = tokens[1].length() == 1 ? tokens[1][0] : '\0';
-      transition.stack_top = tokens[2].length() == 1 ? tokens[2][0] : '\0';
-      transition.next_state = tokens[3];
-      transition.push_string = tokens[4];
-
-      // Validar formato
-      if (tokens[1].length() != 1) {
-        throw std::runtime_error(
-            "Error línea " + std::to_string(line_number) +
-            ": El símbolo de entrada debe ser de un carácter");
-      }
-      if (tokens[2].length() != 1) {
-        throw std::runtime_error("Error línea " + std::to_string(line_number) +
-                                 ": El tope de pila debe ser de un carácter");
-      }
-
-      data.transitions.push_back(transition);
-    }
-
-  } catch (const std::exception& e) {
-    file.close();
-    throw;
+  if (readNonCommentLine(file, line)) {
+    std::cerr << "Warning: Extra lines after transitions ignored at line "
+              << line_number + 1 << std::endl;
   }
 
   file.close();

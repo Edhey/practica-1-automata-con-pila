@@ -50,6 +50,7 @@
     "stdexcept": "cpp",
     "streambuf": "cpp",
     "typeinfo": "cpp",
-    "expected": "cpp"
+    "expected": "cpp",
+    "unordered_set": "cpp"
   }
 }

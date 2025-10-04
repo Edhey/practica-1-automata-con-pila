@@ -25,25 +25,20 @@
  */
 bool PdaParser::readNonCommentLine(std::ifstream& ifs, std::string& line) {
   while (std::getline(ifs, line)) {
-
     size_t start = line.find_first_not_of(" \t\r\n");
     if (start == std::string::npos)
       continue;  // Empty line
 
     line = line.substr(start);
-
-  
     if (line[0] == '#')
       continue;  // Ignore comments
 
-    // Remove comments at the end of the line
-    size_t comment_pos = line.find('#');
+    size_t comment_pos = line.find('#');  // Remove comments at the line end
     if (comment_pos != std::string::npos) {
       line = line.substr(0, comment_pos);
     }
 
-    // Remove trailing whitespace
-    size_t end = line.find_last_not_of(" \t\r\n");
+    size_t end = line.find_last_not_of(" \t\r\n");  // Remove trailing whitespac
     if (end != std::string::npos) {
       line = line.substr(0, end + 1);
     }
@@ -69,4 +64,14 @@ std::vector<std::string> PdaParser::tokenize(const std::string& line) {
   }
 
   return tokens;
+}
+
+/**
+ * @brief Checks if the line contains the epsilon character between alphabet
+ * symbols
+ * @param line The line to check
+ * @return true if the epsilon character is found, false otherwise
+ */
+bool PdaParser::isEpsilonInChain(const std::string& line) {
+  return line.find(PDA::EPSILON) != std::string::npos;
 }

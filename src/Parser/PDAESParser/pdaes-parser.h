@@ -8,8 +8,8 @@
  * @author Himar Edhey Hernández Alonso
  * Correo: alu0101552392@ull.edu.es
  * @date Sep 15 2025
- * @file state.h
- * @brief Definition of
+ * @file pdaes-parser.h
+ * @brief Definition of the class PdaESParser
  * @bug There are no known bugs
  * @see https://github.com/Edhey/practica-1-automata-con-pila.git
  * Revision history:
