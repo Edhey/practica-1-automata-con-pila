@@ -59,7 +59,7 @@ bool PdaParser::readNonCommentLine(std::ifstream& ifs, std::string& line) {
  * @param line The string to be divided
  * @return A vector of tokens
  */
-std::vector<std::string> PdaParser::tokenize(const std::string& line) {
+const std::vector<std::string>& PdaParser::tokenize(const std::string& line) {
   std::vector<std::string> tokens;
   std::istringstream iss(line);
   std::string token;

@@ -63,23 +63,10 @@ public:
 
    std::expected<PdaData, ParseError> parse();
 
-private:
-  std::string file_name_;
-
-  /**
-   * @brief Ignora líneas de comentarios (que empiezan con #)
-   * @param ifs Stream del archivo
-   * @param line String donde se guardará la línea leída
-   * @return true si se leyó una línea válida, false si llegó al EOF
-   */
+protected:
+  std::string file_name_; 
   bool readNonCommentLine(std::ifstream& ifs, std::string& line);
-
-  /**
-   * @brief Divide una línea en tokens separados por espacios
-   * @param line Línea a dividir
-   * @return Vector de tokens
-   */
-  std::vector<std::string> tokenize(const std::string& line);
+  const std::vector<std::string>& tokenize(const std::string& line);
 };
 
 #endif  // PARSER_PDA_PARSER_H_

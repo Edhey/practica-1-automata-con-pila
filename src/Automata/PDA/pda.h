@@ -26,7 +26,7 @@
 #include <tuple>
 #include <vector>
 
-#include "../Automata/Automata.h"
+#include "../Automata/automata.h"
 #include "../../State/state.h"
 
 struct PDATransition {

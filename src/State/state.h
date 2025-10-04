@@ -36,6 +36,7 @@ private:
   std::string name_;
   bool is_final_ = false;
   bool is_initial_ = false;
+  std::map<char, State> transitions_;
 };
 
 #endif // STATE_H
