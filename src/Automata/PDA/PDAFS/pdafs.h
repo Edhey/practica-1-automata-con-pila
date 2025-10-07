@@ -22,8 +22,8 @@
 #include <iostream>
 #include <set>
 
-#include "../pda.h"
 #include "../../State/state.h"
+#include "../pda.h"
 
 /**
  * @brief Class for a Pushdown Automaton that accepts by Final State
@@ -33,10 +33,13 @@ public:
   virtual ~PDAFS() = default;
   bool isAccepted(const std::string& input) override;
 
-  const std::set<State>& getFinalStates() const { return final_states; }
+  const std::set<State<PDATransitionKey, PDATransitionValue>>& getFinalStates()
+      const {
+    return final_states;
+  }
 
 private:
-  std::set<State> final_states;
+  std::set<State<PDATransitionKey, PDATransitionValue>> final_states;
 };
 
 #endif  // PDAFS_H

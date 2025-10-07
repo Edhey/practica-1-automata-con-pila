@@ -26,16 +26,16 @@
 #include <string>
 #include <vector>
 
-#include "../Automata/Alphabet/alphabet.h"
-#include "../Automata/PDA/pda.h"
-#include "../Automata/State/state.h"
+#include "../../Automata/Alphabet/alphabet.h"
+#include "../../Automata/PDA/pda.h"
+#include "../../Automata/State/state.h"
 
 struct PdaData {
   Alphabet<char> input_alphabet;
   Alphabet<char> stack_alphabet;
   char initial_stack_symbol;
-  State<PDATransitionKey, PDATransitionValue> initial_state;
-  std::set<State<PDATransitionKey, PDATransitionValue>> states;
+  std::string initial_state;
+  std::map<std::string, State<PDATransitionKey, PDATransitionValue>> states;
   // ! std::vector<State> final_states;
 };
 
@@ -68,15 +68,16 @@ protected:
       std::ifstream& file, int& line_number);
   std::expected<char, ParseError> parseInitialStackSymbol(std::ifstream& file,
                                                           int& line_number);
-  std::expected<State<PDATransitionKey, PDATransitionValue>, ParseError>
-  parseInitialState(
+  std::expected<std::string, ParseError> parseInitialState(
       std::ifstream& file, int& line_number,
       const std::map<std::string, State<PDATransitionKey, PDATransitionValue>>&
           states);
   std::expected<void, ParseError> parseTransitions(
       std::ifstream& file, int& line_number,
       std::map<std::string, State<PDATransitionKey, PDATransitionValue>>&
-          states);
+          states,
+      const Alphabet<char>* stack_alphabet,
+      const Alphabet<char>* input_alphabet);
 };
 
 #endif  // PARSER_PDA_PARSER_H_

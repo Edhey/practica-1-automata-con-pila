@@ -9,7 +9,7 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/build/stack-automaton",
-      "args": ["../examples/APv/APv-1.txt"],
+      "args": ["es", "../examples/APv/APv-1.txt"],
       "stopAtEntry": true,
       "cwd": "${workspaceFolder}/build",
       "environment": [],

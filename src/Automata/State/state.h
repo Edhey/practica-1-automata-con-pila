@@ -19,12 +19,14 @@
 #define STATE_H
 
 #include <iostream>
+#include <map>
 #include <vector>
 
 template <typename KeyType, typename ValueType>
 class State {
 public:
-  State(const std::string& id = "q-1", bool is_final = false, bool is_initial = false)
+  State(const std::string& id = "q-1", bool is_final = false,
+        bool is_initial = false)
       : id_(id), is_final_(is_final), is_initial_(is_initial) {}
   ~State() = default;
 
@@ -34,8 +36,9 @@ public:
   bool operator==(const std::string& other_id) const { return id_ == other_id; }
   const std::string& getId() const { return id_; }
   void addTransition(const KeyType& key, const ValueType& value) {
-    transitions_[key] = value;
+    this->transitions_[key] = value;
   }
+  const std::map<KeyType, ValueType>& getTransitions() const { return transitions_; }
 
 private:
   std::string id_;

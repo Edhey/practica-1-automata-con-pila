@@ -8,18 +8,26 @@
  * @author Himar Edhey Hernández Alonso
  * Correo: alu0101552392@ull.edu.es
  * @date Sep 15 2025
- * @file pda.cc
- * @brief Implementation of PDA class
+ * @file pda-transition.h
+ * @brief Definition of the class PDA
  * @bug There are no known bugs
  * @see https://github.com/Edhey/practica-1-automata-con-pila.git
  * Revision history:
  */
 
-#include "pda.h"
+ #include <iostream>
 
-void PDA::resetStack() {
-  while (!stack.empty()) {
-    stack.pop();
+struct PDATransitionKey {
+  char input_symbol;
+  char stack_top;
+
+  bool operator<(const PDATransitionKey& other) const {
+    return std::tie(input_symbol, stack_top) <
+           std::tie(other.input_symbol, other.stack_top);
   }
-  stack.push(initial_stack_symbol);
-}
+};
+
+struct PDATransitionValue {
+  std::string next_state_id;
+  std::string push_string;
+};

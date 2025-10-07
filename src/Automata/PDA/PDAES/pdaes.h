@@ -20,6 +20,7 @@
 #define PDAES_H
 
 #include <iostream>
+#include <stack>
 
 #include "../pda.h"
 
@@ -30,6 +31,8 @@ class PDAES : public PDA {
 public:
   virtual ~PDAES() = default;
   bool isAccepted(const std::string& input) override;
+  bool isAccepted(const State<PDATransitionKey, PDATransitionValue>* state,
+                  std::stack<char> stack, std::string input);
 };
 
 #endif  // PDAES_H

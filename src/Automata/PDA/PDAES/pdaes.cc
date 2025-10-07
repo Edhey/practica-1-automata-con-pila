@@ -23,6 +23,86 @@
  * @param input The input string to be checked.
  * @return True if the input is accepted, false otherwise.
  */
-bool PDAES::isAccepted(const std::string& input) { 
-  return false; 
+bool PDAES::isAccepted(const std::string& input) {
+  if (!this->checkInputAlphabet(input)) {
+    std::cerr
+        << "Error: Input string contains symbols not in the input alphabet"
+        << std::endl;
+    return false;
+  }
+  this->resetStack();
+  return isAccepted(this->getStateById(this->initial_state), this->stack,
+                    input);
+}
+
+bool PDAES::isAccepted(const State<PDATransitionKey, PDATransitionValue>* state,
+                       std::stack<char> stack, std::string input) {
+  if (stack.empty()) {
+    if (input.empty() || (input[0] == PDA::EPSILON && input.size() == 1)) { 
+      return true;
+    } else {
+      return false;
+    }
+  }
+  
+  if (state == nullptr) {
+    return false;
+  }
+
+  const char stack_top = stack.top();
+  if (!input.empty()) {
+    char current_symbol = input[0];
+    PDATransitionKey key{current_symbol, stack_top};
+
+    const auto& transitions = state->getTransitions();
+    auto it = transitions.find(key);
+
+    if (it != transitions.end()) {
+      const PDATransitionValue& transition = it->second;
+      std::stack<char> new_stack = stack;
+      new_stack.pop();
+      for (int i = transition.push_string.size() - 1; i >= 0; --i) {
+        char symbol = transition.push_string[i];
+        if (symbol != PDA::EPSILON && !checkStackAlphabet(symbol)) {
+          std::cerr << "Error: Stack symbol '" << symbol
+                    << "' not in stack alphabet" << std::endl;
+          return false;
+        }
+        if (symbol != PDA::EPSILON) {
+          new_stack.push(symbol);
+        }
+      }
+      if (isAccepted(this->getStateById(transition.next_state_id), new_stack,
+                     input.substr(1))) {
+        return true;
+      }
+    }
+  }
+
+  const auto& transitions = state->getTransitions();
+  PDATransitionKey epsilon_key{PDA::EPSILON, stack_top};
+  auto epsilon_it = transitions.find(epsilon_key);
+
+  if (epsilon_it != transitions.end()) {
+    const PDATransitionValue& transition = epsilon_it->second;
+    std::stack<char> new_stack = stack;
+    new_stack.pop();
+    for (int i = transition.push_string.size() - 1; i >= 0; --i) {
+      char symbol = transition.push_string[i];
+      if (symbol != PDA::EPSILON && !checkStackAlphabet(symbol)) {
+        std::cerr << "Error: Stack symbol '" << symbol
+                  << "' not in stack alphabet" << std::endl;
+        return false;
+      }
+      if (symbol != PDA::EPSILON) {
+        new_stack.push(symbol);
+      }
+    }
+    if (isAccepted(this->getStateById(transition.next_state_id), new_stack,
+                   input)) {
+      return true;
+    }
+  }
+
+  return false;
 }

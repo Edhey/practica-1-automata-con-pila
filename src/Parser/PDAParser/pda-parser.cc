@@ -160,8 +160,7 @@ std::expected<char, ParseError> PdaParser::parseInitialStackSymbol(
   return tokens[0][0];
 }
 
-std::expected<State<PDATransitionKey, PDATransitionValue>, ParseError>
-PdaParser::parseInitialState(
+std::expected<std::string, ParseError> PdaParser::parseInitialState(
     std::ifstream& file, int& line_number,
     const std::map<std::string, State<PDATransitionKey, PDATransitionValue>>&
         states) {
@@ -178,19 +177,19 @@ PdaParser::parseInitialState(
         "Error: Initial state must be a single state ID", line_number));
   }
 
-  auto initial_state = states.find(tokens[0]);
-  if (initial_state == states.end()) {
+  if (!states.contains(tokens[0])) {
     return std::unexpected(ParseError(
         "Error: Initial state '" + tokens[0] + "' not defined", line_number));
   }
 
-  return initial_state->second;
+  return tokens[0];
 }
 
 std::expected<void, ParseError> PdaParser::parseTransitions(
     std::ifstream& file, int& line_number,
-    std::map<std::string, State<PDATransitionKey, PDATransitionValue>>&
-        states) {
+    std::map<std::string, State<PDATransitionKey, PDATransitionValue>>& states,
+    const Alphabet<char>* stack_alphabet,
+    const Alphabet<char>* input_alphabet) {
   std::string line;
   while (readNonCommentLine(file, line)) {
     line_number++;
@@ -210,6 +209,21 @@ std::expected<void, ParseError> PdaParser::parseTransitions(
     if (tokens[1].size() != 1 || tokens[2].size() != 1) {
       return std::unexpected(ParseError(
           "Error: Input symbol and stack top must be single characters",
+          line_number));
+    }
+
+    if (!input_alphabet->contains(input_symbol) &&
+        input_symbol != PDA::EPSILON) {
+      return std::unexpected(ParseError(
+          "Error: Input symbol '" + std::string(1, input_symbol) +
+              "' not in input alphabet",
+          line_number));
+    }
+
+    if (!stack_alphabet->contains(stack_top) && stack_top != PDA::EPSILON) {
+      return std::unexpected(ParseError(
+          "Error: Stack top symbol '" + std::string(1, stack_top) +
+              "' not in stack alphabet",
           line_number));
     }
 
