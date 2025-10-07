@@ -19,22 +19,23 @@
 
 PDAESFactory::PDAESFactory(const std::string& filename) : filename_(filename) {}
 
-std::unique_ptr<Automata> PDAESFactory::CreateAutomaton() {
-  PdaParser parser(filename_);
-  PdaData data = parser.parse();
-  auto pda = std::make_unique<PDAES>();
-
-  pda->setStates(data.states);
-  pda->setInputAlphabet(data.input_alphabet);
-  pda->setStackAlphabet(data.stack_alphabet);
-  pda->setInitialState(data.initial_state);
-  pda->setInitialStackSymbol(data.initial_stack_symbol);
-
-  for (const auto& transition : data.transitions) {
-    pda->addTransition(transition.current_state, transition.input_symbol,
-                       transition.stack_top, transition.next_state,
-                       transition.push_string);
+std::unique_ptr<Automata<PDATransitionKey, PDATransitionValue>>
+PDAESFactory::CreateAutomaton() {
+  PdaESParser parser(filename_);
+  auto data = parser.parse();
+  if (!data) {
+    std::cerr << "Error parsing PDA file: " << data.error().message
+              << " at line " << data.error().line_number << std::endl;
+    return nullptr;
   }
+
+  auto pda = std::make_unique<PDAES>();
+  pda->setStates(data->states);
+  pda->setInputAlphabet(data->input_alphabet);
+  pda->setStackAlphabet(data->stack_alphabet);
+  pda->setInitialState(data->initial_state);
+  pda->setInitialStackSymbol(data->initial_stack_symbol);
+  pda->resetStack();
 
   return pda;
 }

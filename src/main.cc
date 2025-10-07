@@ -18,48 +18,25 @@
 #include <iostream>
 #include <string>
 
+#include "Automata/PDA/pda.h"
 #include "AutomataFactory/PDAESFactory/pdaes-factory.h"
 
 void printUsage(const char* program_name) {
-  std::cout << "Uso: " << program_name << " <archivo_automata> <cadena_entrada>"
-            << std::endl;
-  std::cout << "Ejemplo: " << program_name << " automata.pda aabb" << std::endl;
+  std::cout << "Usage: " << program_name << " <automata_file>" << std::endl;
+  std::cout << "Example: " << program_name << " automata.pda" << std::endl;
 }
 
 int main(int argc, char const* argv[]) {
-  std::cout << "HOLA";
-  if (argc != 3) {
+  if (argc != 2) {
     printUsage(argv[0]);
     return 1;
   }
 
   std::string filename = argv[1];
-  std::string input_string = argv[2];
 
-  try {
-    // Crear el autómata usando la factory
-    PDAESFactory factory(filename);
-    auto pda = factory.CreateAutomaton();
-
-    // Imprimir información del autómata
-    std::cout << "\n";
-    pda->print();
-    std::cout << "\n";
-
-    // Simular el autómata con la cadena de entrada
-    std::cout << "Cadena de entrada: " << input_string << std::endl;
-    bool accepted = pda->simulate(input_string);
-
-    if (accepted) {
-      std::cout << "✓ Cadena ACEPTADA" << std::endl;
-    } else {
-      std::cout << "✗ Cadena RECHAZADA" << std::endl;
-    }
-
-    return accepted ? 0 : 1;
-
-  } catch (const std::exception& e) {
-    std::cerr << "Error: " << e.what() << std::endl;
-    return 2;
-  }
+  // Crear el autómata usando la factory
+  PDAESFactory factory(filename);
+  std::unique_ptr<PDA> pda = factory.CreateAutomaton();
+  pda->resetStack();
+  return pda ? 0 : 1;
 }

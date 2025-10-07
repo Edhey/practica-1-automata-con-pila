@@ -26,13 +26,10 @@
 #include <string>
 #include <vector>
 
-#include "../Alphabet/alphabet.h"
+#include "../Automata/Alphabet/alphabet.h"
 #include "../Automata/PDA/pda.h"
-#include "../State/state.h"
+#include "../Automata/State/state.h"
 
-/**
- * @brief Estructura para almacenar los datos parseados del autómata
- */
 struct PdaData {
   Alphabet<char> input_alphabet;
   Alphabet<char> stack_alphabet;
@@ -42,9 +39,6 @@ struct PdaData {
   // ! std::vector<State> final_states;
 };
 
-/**
- * @brief Tipo de error para el parser
- */
 struct ParseError {
   std::string message;
   int line_number;
@@ -53,14 +47,11 @@ struct ParseError {
       : message(msg), line_number(line) {}
 };
 
-/**
- * @brief Clase para parsear archivos de definición de APf
- */
 class PdaParser {
 public:
-  explicit PdaParser(const std::string& file_name);
-  ~PdaParser() = default;
-  virtual std::expected<PdaData, ParseError> parse();
+  explicit PdaParser(const std::string& file_name) : file_name_(file_name) {}
+  virtual ~PdaParser() = default;
+  virtual std::expected<PdaData, ParseError> parse() = 0;
 
 protected:
   std::string file_name_;

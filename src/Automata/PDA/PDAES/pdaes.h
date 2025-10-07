@@ -21,7 +21,7 @@
 
 #include <iostream>
 
-#include "../PDA/pda.h"
+#include "../pda.h"
 
 /**
  * @brief Class for a Pushdown Automaton that accepts by Empty Stack

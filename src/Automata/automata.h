@@ -21,8 +21,8 @@
 #include <set>
 #include <string>
 
-#include "../State/state.h"
-#include "../Alphabet/alphabet.h"
+#include "Alphabet/alphabet.h"
+#include "State/state.h"
 
 /**
  * @brief Abstract class for automata (automaton interface)
@@ -33,6 +33,15 @@ public:
   virtual ~Automata() = default;
   virtual bool isAccepted(const std::string& input) = 0;
   static constexpr char EPSILON = '.';
+  void setInitialState(const State<KeyType, ValueType>& state) {
+    initial_state = state;
+  }
+  void setStates(const std::set<State<KeyType, ValueType>>& states_set) {
+    states = states_set;
+  }
+  void setInputAlphabet(const Alphabet<char>& alphabet) {
+    input_alphabet = alphabet;
+  }
 
 protected:
   // State current_state;

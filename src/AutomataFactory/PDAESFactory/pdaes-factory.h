@@ -20,23 +20,20 @@
 
 #include <memory>
 
-#include "../../PDA/PDAES/pdaes.h"
-#include "../../Parser/pda-parser.h"
+#include "../../Automata/PDA/PDAES/pdaes.h"
+#include "../../Parser/PDAESParser/pdaes-parser.h"
 #include "../AutomataFactory.h"
 
 /**
  * @brief Factory concreta para crear autómatas de pila con estados finales
  */
-class PDAESFactory : public AutomataFactory {
+class PDAESFactory
+    : public AutomataFactory<PDATransitionKey, PDATransitionValue> {
 public:
   explicit PDAESFactory(const std::string& filename);
   ~PDAESFactory() override = default;
-
-  /**
-   * @brief Crea un autómata de pila a partir del archivo especificado
-   * @return Puntero único al PDA creado
-   */
-  std::unique_ptr<Automata> CreateAutomaton() override;
+  std::unique_ptr<Automata<PDATransitionKey, PDATransitionValue>>
+  CreateAutomaton() override;
 
 private:
   std::string filename_;

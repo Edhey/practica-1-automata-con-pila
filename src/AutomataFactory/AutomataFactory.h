@@ -19,22 +19,17 @@
 #define AUTOMATAFACTORY_AUTOMATAFACTORY_H_
 
 #include <memory>
-
-class PDA;  // Forward declaration
+#include "../Automata/automata.h"
 
 /**
- * @brief Clase base abstracta para factories de autómatas
+ * @brief Base abstract class for automata factories
  */
+template <typename TransitionKey, typename TransitionValue>
 class AutomataFactory {
 public:
   AutomataFactory() = default;
   virtual ~AutomataFactory() = default;
-
-  /**
-   * @brief Método factory para crear un autómata
-   * @return Puntero único al autómata creado
-   */
-  virtual std::unique_ptr<Automata> CreateAutomaton() = 0;
+  virtual std::unique_ptr<Automata<TransitionKey, TransitionValue>> CreateAutomaton() = 0;
 };
 
 #endif  // AUTOMATAFACTORY_AUTOMATAFACTORY_H_
