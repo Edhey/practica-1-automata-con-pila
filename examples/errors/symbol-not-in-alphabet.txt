@@ -1,0 +1,15 @@
+# Error: Símbolo 'c' usado pero no está en alfabeto de entrada
+
+q0 q1
+
+a b
+
+S A
+
+q0
+
+S
+
+# 'c' no está en el alfabeto de entrada
+q0 c S q1 A
+q0 a S q1 aS

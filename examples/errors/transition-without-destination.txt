@@ -1,0 +1,15 @@
+# Error: Transición apunta a estado vacío
+
+q0 q1
+
+a b
+
+S A
+
+q0
+
+S
+
+# Estado destino vacío o inválido
+q0 a S  aS
+q1 b A q0 .

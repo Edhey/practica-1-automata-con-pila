@@ -18,6 +18,7 @@
 #ifndef AUTOMATA_ALPHABET_ALPHABET_H_
 #define AUTOMATA_ALPHABET_ALPHABET_H_
 
+#include <iostream>
 #include <set>
 #include <string>
 
@@ -27,7 +28,13 @@ public:
   Alphabet() : symbols_() {}
   ~Alphabet() = default;
 
-  void addSymbol(T symbol) { symbols_.insert(symbol); }
+  void addSymbol(T symbol) {
+    auto result = symbols_.insert(symbol);
+    if (!result.second) {
+      std::cerr << "Warning: Duplicate symbol '" << symbol
+                << "' not added to alphabet" << std::endl;
+    }
+  }
   void removeSymbol(T symbol) { symbols_.erase(symbol); }
   bool contains(T symbol) const { return symbols_.contains(symbol); }
   const std::set<T>& getSymbols() const { return symbols_; }
@@ -36,4 +43,4 @@ private:
   std::set<T> symbols_;
 };
 
-#endif // AUTOMATA_ALPHABET_ALPHABET_H_
+#endif  // AUTOMATA_ALPHABET_ALPHABET_H_

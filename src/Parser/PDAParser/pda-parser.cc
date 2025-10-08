@@ -52,7 +52,8 @@ std::expected<PdaData, ParseError> PdaParser::parse() {
   }
   data.initial_state = init_state_result.value();
 
-  auto init_stack_result = parseInitialStackSymbol(file, line_number);
+  auto init_stack_result =
+      parseInitialStackSymbol(file, line_number, data.stack_alphabet);
   if (!init_stack_result.has_value()) {
     return std::unexpected(init_stack_result.error());
   }
@@ -150,7 +151,7 @@ PdaParser::parseStates(std::ifstream& file, int& line_number) {
         {token, State<PDATransitionKey, PDATransitionValue>(token)});
     if (!result.second) {
       std::cerr << "Warning: Duplicate state '" << token << "' at line "
-                << line_number << std::endl;
+                << line_number << " not added" << std::endl;
     }
   }
   return states;
@@ -170,6 +171,11 @@ std::expected<Alphabet<char>, ParseError> PdaParser::parseInputAlphabet(
     if (token.size() != 1) {
       return std::unexpected(
           ParseError("Error: Input alphabet symbols must be single characters",
+                     line_number));
+    }
+    if (token[0] == PDA::EPSILON) {
+      return std::unexpected(
+          ParseError("Error: Input alphabet cannot contain the epsilon symbol",
                      line_number));
     }
     alphabet.addSymbol(token[0]);
@@ -193,6 +199,11 @@ std::expected<Alphabet<char>, ParseError> PdaParser::parseStackAlphabet(
           ParseError("Error: Stack alphabet symbols must be single characters",
                      line_number));
     }
+    if (token[0] == PDA::EPSILON) {
+      return std::unexpected(
+          ParseError("Error: Stack alphabet cannot contain the epsilon symbol",
+                     line_number));
+    }
     alphabet.addSymbol(token[0]);
   }
 
@@ -200,7 +211,8 @@ std::expected<Alphabet<char>, ParseError> PdaParser::parseStackAlphabet(
 }
 
 std::expected<char, ParseError> PdaParser::parseInitialStackSymbol(
-    std::ifstream& file, int& line_number) {
+    std::ifstream& file, int& line_number,
+    const Alphabet<char>& stack_alphabet) {
   std::string line;
   if (!readNonCommentLine(file, line)) {
     return std::unexpected(ParseError(
@@ -212,6 +224,16 @@ std::expected<char, ParseError> PdaParser::parseInitialStackSymbol(
   if (tokens.size() != 1 || tokens[0].size() != 1) {
     return std::unexpected(ParseError(
         "Error: Initial stack symbol must be a single character", line_number));
+  }
+  if (tokens[0][0] == PDA::EPSILON) {
+    return std::unexpected(ParseError(
+        "Error: Initial stack symbol cannot be the epsilon character",
+        line_number));
+  }
+  if (stack_alphabet.contains(tokens[0][0]) == false) {
+    return std::unexpected(ParseError(
+        "Error: Initial stack symbol '" + tokens[0] + "' not in stack alphabet",
+        line_number));
   }
 
   return tokens[0][0];
@@ -271,17 +293,17 @@ std::expected<void, ParseError> PdaParser::parseTransitions(
 
     if (!input_alphabet->contains(input_symbol) &&
         input_symbol != PDA::EPSILON) {
-      return std::unexpected(ParseError(
-          "Error: Input symbol '" + std::string(1, input_symbol) +
-              "' not in input alphabet",
-          line_number));
+      return std::unexpected(ParseError("Error: Input symbol '" +
+                                            std::string(1, input_symbol) +
+                                            "' not in input alphabet",
+                                        line_number));
     }
 
     if (!stack_alphabet->contains(stack_top) && stack_top != PDA::EPSILON) {
-      return std::unexpected(ParseError(
-          "Error: Stack top symbol '" + std::string(1, stack_top) +
-              "' not in stack alphabet",
-          line_number));
+      return std::unexpected(ParseError("Error: Stack top symbol '" +
+                                            std::string(1, stack_top) +
+                                            "' not in stack alphabet",
+                                        line_number));
     }
 
     auto current_state_it = states.find(current_state_id);
@@ -295,6 +317,22 @@ std::expected<void, ParseError> PdaParser::parseTransitions(
       return std::unexpected(
           ParseError("Error: Next state '" + next_state_id + "' not defined",
                      line_number));
+    }
+
+    if (push_string != std::string(1, PDA::EPSILON)) {
+      for (char symbol : push_string) {
+        if (symbol == PDA::EPSILON) {
+          return std::unexpected(ParseError(
+              "Error: Push string cannot contain the epsilon character",
+              line_number));
+        }
+        if (!stack_alphabet->contains(symbol)) {
+          return std::unexpected(
+              ParseError("Error: Push string contains symbol '" +
+                             std::string(1, symbol) + "' not in stack alphabet",
+                         line_number));
+        }
+      }
     }
 
     PDATransitionKey key{input_symbol, stack_top};

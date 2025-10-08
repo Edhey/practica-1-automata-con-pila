@@ -1,0 +1,16 @@
+# Error: Transición con número incorrecto de campos
+
+q0 q1
+
+a b
+
+S A
+
+q0
+
+S
+
+# Transición incompleta (faltan campos)
+q0 a S q1
+# Transición con demasiados campos
+q0 b A q1 B extra

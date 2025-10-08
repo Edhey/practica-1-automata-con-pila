@@ -74,7 +74,7 @@ protected:
   std::expected<Alphabet<char>, ParseError> parseStackAlphabet(
       std::ifstream& file, int& line_number);
   std::expected<char, ParseError> parseInitialStackSymbol(std::ifstream& file,
-                                                          int& line_number);
+                                                          int& line_number, const Alphabet<char>& stack_alphabet);
   std::expected<std::string, ParseError> parseInitialState(
       std::ifstream& file, int& line_number,
       const std::map<std::string, State<PDATransitionKey, PDATransitionValue>>&

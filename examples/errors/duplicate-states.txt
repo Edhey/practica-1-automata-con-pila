@@ -1,0 +1,14 @@
+# Error: Estado 'q1' declarado dos veces
+
+q0 q1 q1 q2
+
+a b
+
+S A
+
+q0
+
+S
+
+q0 a S q1 aS
+q1 b A q2 .

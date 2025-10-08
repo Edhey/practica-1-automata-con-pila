@@ -1,0 +1,15 @@
+# Error: Símbolo inicial de pila 'Z' no está en alfabeto de pila
+
+q0 q1
+
+a b
+
+S A B
+
+q0
+
+# 'Z' no está en alfabeto de pila
+Z
+
+q0 a S q1 aS
+q1 b A q0 .

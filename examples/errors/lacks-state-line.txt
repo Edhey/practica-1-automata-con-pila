@@ -1,0 +1,13 @@
+# Error: No se define ningún estado
+
+# Falta línea de estados
+
+a b
+
+S A
+
+q0
+
+S
+
+q0 a S q1 aS
