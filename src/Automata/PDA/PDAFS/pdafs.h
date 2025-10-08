@@ -34,17 +34,13 @@ public:
   virtual ~PDAFS() = default;
   bool isAccepted(const std::string& input) override;
 
-  const std::set<State<PDATransitionKey, PDATransitionValue>>& getFinalStates()
-      const {
-    return final_states;
-  }
-  void setFinalStates(
-      const std::set<State<PDATransitionKey, PDATransitionValue>>& states) {
+  const std::set<std::string>& getFinalStates() const { return final_states; }
+  void setFinalStates(const std::set<std::string>& states) {
     final_states = states;
   }
 
 private:
-  std::set<State<PDATransitionKey, PDATransitionValue>> final_states;
+  std::set<std::string> final_states;
 };
 
 #endif  // PDAFS_H

@@ -36,13 +36,14 @@ struct PdaData {
   char initial_stack_symbol;
   std::string initial_state;
   std::map<std::string, State<PDATransitionKey, PDATransitionValue>> states;
-  // ! std::vector<State> final_states;
+  std::set<std::string> final_states;
   PdaData()
       : input_alphabet(),
         stack_alphabet(),
         initial_stack_symbol(PDA::EPSILON),
         initial_state(""),
-        states() {}
+        states(),
+        final_states() {}
 };
 
 struct ParseError {
@@ -57,7 +58,7 @@ class PdaParser {
 public:
   explicit PdaParser(const std::string& file_name) : file_name_(file_name) {}
   virtual ~PdaParser() = default;
-  virtual std::expected<PdaData, ParseError> parse() = 0;
+  std::expected<PdaData, ParseError> parse();
 
 protected:
   std::string file_name_;
@@ -84,6 +85,8 @@ protected:
           states,
       const Alphabet<char>* stack_alphabet,
       const Alphabet<char>* input_alphabet);
+  virtual std::expected<void, ParseError> parseSpecificData(
+      std::ifstream& file, int& line_number, PdaData& data) = 0;
 };
 
 #endif  // PARSER_PDA_PARSER_H_

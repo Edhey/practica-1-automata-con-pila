@@ -21,6 +21,10 @@
 #include "PDAFactory/pda-factory.h"
 #include "Parser/args-parser.h"
 
+#define RED   "\033[31m"
+#define GREEN "\033[32m"
+#define RESET "\033[0m"
+
 int main(int argc, char* argv[]) {
   auto args_opt = ArgsParser::parse(argc, argv);
   if (!args_opt.has_value()) {
@@ -43,13 +47,17 @@ int main(int argc, char* argv[]) {
   std::cout << "Automaton created successfully!\n" << std::endl;
 
   std::string input;
-  std::cout << "Enter input strings (Ctrl+D to finish):" << std::endl;
+  std::cout << "Enter input strings (q. to finish):" << std::endl;
 
   while (std::cin >> input) {
+    if (input == "q.") {
+      std::cout << "Exiting the simulator..." << std::endl;
+      break;
+    }
     bool accepted = pda->isAccepted(input);
-    std::cout << "String '" << input
-              << "': " << (accepted ? "✅ ACCEPTED" : "❌ REJECTED")
-              << std::endl;
+    std::cout << "String '" << input << "': "
+          << (accepted ? GREEN "ACCEPTED" RESET : RED "REJECTED" RESET)
+          << std::endl;
   }
 
   return 0;

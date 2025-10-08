@@ -26,6 +26,7 @@
 #include "../Automata/PDA/pda.h"
 #include "../Parser/PDAParser/pda-parser.h"
 #include "../Parser/PDAParser/PDAESParser/pdaes-parser.h"
+#include "../Parser/PDAParser/PDAFSParser/pdafs-parser.h"
 #include "pda-type.h"
 
 /**
@@ -43,31 +44,19 @@ public:
                                              const std::string& filename) {
     switch (type) {
     case PDAType::PDAES: {
-      PdaESParser parser(filename);
-      auto data = parser.parse();
-      if (!data) {
-        std::cerr << "Error parsing PDA file: " << data.error().message
-                  << " at line " << data.error().line_number << std::endl;
-        return nullptr;
-      }
-
-      auto pda = std::make_unique<PDAES>();
-      pda->setStates(data->states);
-      pda->setInputAlphabet(data->input_alphabet);
-      pda->setStackAlphabet(data->stack_alphabet);
-      pda->setInitialState(data->initial_state);
-      pda->setInitialStackSymbol(data->initial_stack_symbol);
-      pda->resetStack();
-
-      return pda;      
+      return createPDAES(filename);     
     }
     case PDAType::PDAFS: {
-      return std::make_unique<PDAFS>();
+      return createPDAFS(filename);
     }
     default:
       return nullptr;
     }
   }
+
+private:
+  static std::unique_ptr<PDA> createPDAES(const std::string& filename);
+  static std::unique_ptr<PDA> createPDAFS(const std::string& filename);
 };
 
 #endif  // PDAFACTORY_PDAFACTORY_H_
