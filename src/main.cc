@@ -15,51 +15,50 @@
  * Revision history:
  */
 
+#include <fstream>
 #include <iostream>
-#include <string>
 
-#include "AutomataFactory/PDAESFactory/pdaes-factory.h"
+#include "PDAFactory/pda-factory.h"
+#include "Parser/args-parser.h"
 
-void printUsage(const char* program_name) {
-  std::cout << "Uso: " << program_name << " <archivo_automata> <cadena_entrada>"
-            << std::endl;
-  std::cout << "Ejemplo: " << program_name << " automata.pda aabb" << std::endl;
-}
+#define RED   "\033[31m"
+#define GREEN "\033[32m"
+#define RESET "\033[0m"
 
-int main(int argc, char const* argv[]) {
-  std::cout << "HOLA";
-  if (argc != 3) {
-    printUsage(argv[0]);
+int main(int argc, char* argv[]) {
+  auto args_opt = ArgsParser::parse(argc, argv);
+  if (!args_opt.has_value()) {
+    return 1;  // Error en los argumentos
+  }
+
+  ArgsParser args = args_opt.value();
+
+  std::cout << "Creating automaton: "
+            << AutomataTypeHelper::toString(args.getPDAType()) << std::endl;
+  std::cout << "Input file: " << args.getInputFile() << std::endl;
+
+  auto pda = PDAFactory::createAutomata(args.getPDAType(), args.getInputFile());
+
+  if (!pda) {
+    std::cerr << "Error: Could not create automaton" << std::endl;
     return 1;
   }
 
-  std::string filename = argv[1];
-  std::string input_string = argv[2];
+  std::cout << "Automaton created successfully!\n" << std::endl;
 
-  try {
-    // Crear el autómata usando la factory
-    PDAESFactory factory(filename);
-    auto pda = factory.CreateAutomaton();
+  std::string input;
+  std::cout << "Enter input strings (q. to finish):" << std::endl;
 
-    // Imprimir información del autómata
-    std::cout << "\n";
-    pda->print();
-    std::cout << "\n";
-
-    // Simular el autómata con la cadena de entrada
-    std::cout << "Cadena de entrada: " << input_string << std::endl;
-    bool accepted = pda->simulate(input_string);
-
-    if (accepted) {
-      std::cout << "✓ Cadena ACEPTADA" << std::endl;
-    } else {
-      std::cout << "✗ Cadena RECHAZADA" << std::endl;
+  while (std::cin >> input) {
+    if (input == "q.") {
+      std::cout << "Exiting the simulator..." << std::endl;
+      break;
     }
-
-    return accepted ? 0 : 1;
-
-  } catch (const std::exception& e) {
-    std::cerr << "Error: " << e.what() << std::endl;
-    return 2;
+    bool accepted = pda->isAccepted(input);
+    std::cout << "String '" << input << "': "
+          << (accepted ? GREEN "ACCEPTED" RESET : RED "REJECTED" RESET)
+          << std::endl;
   }
+
+  return 0;
 }

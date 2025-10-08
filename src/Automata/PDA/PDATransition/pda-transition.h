@@ -8,25 +8,26 @@
  * @author Himar Edhey Hernández Alonso
  * Correo: alu0101552392@ull.edu.es
  * @date Sep 15 2025
- * @file transition.h
- * @brief Definition of the abstract class Transition
+ * @file pda-transition.h
+ * @brief Definition of the class PDA
  * @bug There are no known bugs
  * @see https://github.com/Edhey/practica-1-automata-con-pila.git
  * Revision history:
  */
 
-#ifndef TRANSITION_H
-#define TRANSITION_H
+ #include <iostream>
 
-#include <iostream>
-#include <string>
-#include <vector>
-#include "../State/state.h"
+struct PDATransitionKey {
+  char input_symbol;
+  char stack_top;
 
-class Transition {
- public:
-  virtual ~Transition() = default;
-  
+  bool operator<(const PDATransitionKey& other) const {
+    return std::tie(input_symbol, stack_top) <
+           std::tie(other.input_symbol, other.stack_top);
+  }
 };
 
-#endif  // TRANSITION_H
+struct PDATransitionValue {
+  std::string next_state_id;
+  std::string push_string;
+};

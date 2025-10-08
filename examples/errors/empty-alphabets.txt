@@ -1,0 +1,13 @@
+# Error: Alfabetos vacíos
+
+q0 q1
+
+# Alfabeto de entrada vacío (solo comentarios)
+
+# Alfabeto de pila vacío
+
+q0
+
+S
+
+q0 a S q1 aS

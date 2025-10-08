@@ -1,0 +1,16 @@
+# Error: Líneas extra no esperadas
+
+q0 q1
+
+a b
+
+S A
+
+q0
+
+S
+
+# Línea extra no esperada (para PDAES no hay estados finales)
+extra line here
+
+q0 a S q1 aS

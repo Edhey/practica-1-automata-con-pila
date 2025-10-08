@@ -20,16 +20,31 @@
 #define PDAES_H
 
 #include <iostream>
+#include <stack>
 
-#include "../PDA/pda.h"
+#include "../pda.h"
 
 /**
  * @brief Class for a Pushdown Automaton that accepts by Empty Stack
  */
 class PDAES : public PDA {
 public:
+  PDAES() : PDA() {}
   virtual ~PDAES() = default;
   bool isAccepted(const std::string& input) override;
+
+private:
+  bool isAcceptedRecursive(
+      const State<PDATransitionKey, PDATransitionValue>* state,
+      std::stack<char> stack, const std::string& input);
+  bool pushStringOntoStack(std::stack<char>& stack,
+                           const std::string& push_string);
+  bool tryInputTransitions(
+      const State<PDATransitionKey, PDATransitionValue>* state,
+      std::stack<char> stack, const std::string& input, char stack_top);
+  bool tryEpsilonTransitions(
+      const State<PDATransitionKey, PDATransitionValue>* state,
+      std::stack<char> stack, const std::string& input, char stack_top);
 };
 
 #endif  // PDAES_H

@@ -11,7 +11,7 @@ cmake_minimum_required(VERSION 3.20)  # For C++23 support
 set(CMAKE_CXX_COMPILER "/usr/bin/g++-13")    # Use g++-13
 
 # set the project name 
-project(stack-automaton-main               # Mandatory
+project(stack-automaton               # Mandatory
     VERSION 1.0
     DESCRIPTION "stack-automaton problem"
     LANGUAGES CXX)
@@ -33,10 +33,10 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 # Automatically add all .cc files
 file(GLOB_RECURSE ALL_CC_FILES "${PROJECT_SOURCE_DIR}/src/*.cc")
 
-add_executable(stack-automaton-main ${ALL_CC_FILES})
+add_executable(stack-automaton ${ALL_CC_FILES})
 
 # Add expected compiler features to a target.
-target_compile_features(stack-automaton-main PRIVATE cxx_std_23)
+target_compile_features(stack-automaton PRIVATE cxx_std_23)
 
 # Add compile options to a target.
-target_compile_options(stack-automaton-main PRIVATE -Wall -Wextra -Wpedantic -Weffc++)
+target_compile_options(stack-automaton PRIVATE -Wall -Wextra -Wpedantic -Weffc++)

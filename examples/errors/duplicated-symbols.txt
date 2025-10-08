@@ -1,0 +1,13 @@
+# Error: Símbolo 'a' aparece dos veces
+
+q0 q1
+
+a a b
+
+S A A B
+
+q0
+
+S
+
+q0 a S q1 aS

@@ -1,0 +1,13 @@
+# Error: No se define alfabeto de entrada
+
+q0 q1
+
+# Falta alfabeto de entrada
+
+S A
+
+q0
+
+S
+
+q0 a S q1 aS

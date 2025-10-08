@@ -1,0 +1,17 @@
+# Error: Estado final 'qf' no declarado
+
+q0 q1 q2
+
+a b
+
+S A
+
+q0
+
+S
+
+# Estado final no existe
+qf q3
+
+q0 a S q1 aS
+q1 b A q2 .

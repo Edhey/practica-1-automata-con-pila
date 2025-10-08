@@ -1,0 +1,15 @@
+# Error: Falta línea de estado inicial
+
+q0 q1 qf
+
+a b
+
+S A
+
+# Falta estado inicial
+
+S
+
+qf
+
+q0 a S q1 aS

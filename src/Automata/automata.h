@@ -21,22 +21,57 @@
 #include <set>
 #include <string>
 
-#include "../State/state.h"
+#include "Alphabet/alphabet.h"
+#include "State/state.h"
 
 /**
  * @brief Abstract class for automata (automaton interface)
  */
+template <typename KeyType, typename ValueType>
 class Automata {
 public:
+  Automata() : initial_state{}, states{}, input_alphabet{} {}
   virtual ~Automata() = default;
   virtual bool isAccepted(const std::string& input) = 0;
+  static constexpr char EPSILON = '.';
+  void setInitialState(const std::string& state) { initial_state = state; }
+  void setStates(
+      const std::map<std::string, State<KeyType, ValueType>>& states_set) {
+    states = states_set;
+  }
+  void setInputAlphabet(const Alphabet<char>& alphabet) {
+    input_alphabet = alphabet;
+  }
+  State<KeyType, ValueType>* getStateById(const std::string& id);
+  bool checkInputAlphabet(const std::string& input);
 
 protected:
   // State current_state;
-  State initial_state;
-  std::set<State> states;
-  std::set<char> input_alphabet;
-  static constexpr char EPSILON = '.';
+  std::string initial_state;
+  // std::set<State<KeyType, ValueType>> states;
+  std::map<std::string, State<KeyType, ValueType>> states;
+  Alphabet<char> input_alphabet;
 };
+
+template <typename KeyType, typename ValueType>
+inline State<KeyType, ValueType>* Automata<KeyType, ValueType>::getStateById(
+    const std::string& id) {
+  auto it = states.find(id);
+  if (it != states.end()) {
+    return &it->second;
+  }
+  return nullptr;
+}
+
+template <typename KeyType, typename ValueType>
+inline bool Automata<KeyType, ValueType>::checkInputAlphabet(
+    const std::string& input) {
+  for (const char& symbol : input) {
+    if (!input_alphabet.contains(symbol) && symbol != EPSILON) {
+      return false;
+    }
+  }
+  return true;
+}
 
 #endif  // AUTOMATA_H

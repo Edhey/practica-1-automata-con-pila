@@ -23,7 +23,10 @@
 class PdaESParser : public PdaParser {
 public:
   explicit PdaESParser(const std::string& file_name) : PdaParser(file_name) {}
-  std::expected<PdaData, ParseError> parse() override;
+  std::expected<void, ParseError> parseSpecificData(std::ifstream&, int&,
+                                                    PdaData&) override {
+    return {};
+  }
 };
 
 #endif  // PARSER_PDAESPARSER_PDAES_PARSER_H_

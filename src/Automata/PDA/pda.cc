@@ -16,3 +16,10 @@
  */
 
 #include "pda.h"
+
+void PDA::resetStack() {
+  while (!stack.empty()) {
+    stack.pop();
+  }
+  stack.push(initial_stack_symbol);
+}

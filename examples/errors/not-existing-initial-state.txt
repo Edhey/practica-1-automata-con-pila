@@ -1,0 +1,15 @@
+# Error: Estado inicial 'q5' no está en conjunto de estados
+
+q0 q1 q2
+
+a b
+
+S A
+
+# Estado inicial no existe
+q5
+
+S
+
+q0 a S q1 aS
+q1 b A q0 .

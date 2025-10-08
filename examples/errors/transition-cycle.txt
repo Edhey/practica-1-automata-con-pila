@@ -1,0 +1,7 @@
+# Error: Bucle sin apilar nada (puede causar ciclo infinito)
+q0
+a
+S
+q0
+S
+q0 . S q0 .  # Épsilon transición que se queda en q0 y no apila nada

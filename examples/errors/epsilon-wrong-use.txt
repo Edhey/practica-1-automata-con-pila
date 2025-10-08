@@ -1,0 +1,13 @@
+# Error: Épsilon (.) declarado como símbolo del alfabeto
+
+q0 q1
+
+a . b
+
+S A
+
+q0
+
+S
+
+q0 a S q1 aS

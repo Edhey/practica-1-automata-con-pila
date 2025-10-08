@@ -1,0 +1,13 @@
+# Error: No se define alfabeto de pila
+
+q0 q1
+
+a b
+
+# Falta alfabeto de pila
+
+q0
+
+S
+
+q0 a S q1 aS

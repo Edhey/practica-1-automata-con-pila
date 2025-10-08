@@ -1,0 +1,16 @@
+# Error: Falta línea de estados finales en PDAFS
+
+q0 q1 qf
+
+a b
+
+S A
+
+q0
+
+S
+
+# Falta línea de estados finales
+
+q0 a S q1 aS
+q1 b A qf .

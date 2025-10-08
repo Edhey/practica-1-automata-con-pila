@@ -8,7 +8,7 @@
  * @author Himar Edhey Hernández Alonso
  * Correo: alu0101552392@ull.edu.es
  * @date Sep 15 2025
- * @file automata.h
+ * @file pda.h
  * @brief Definition of the class PDA
  * @bug There are no known bugs
  * @see https://github.com/Edhey/practica-1-automata-con-pila.git
@@ -26,42 +26,38 @@
 #include <tuple>
 #include <vector>
 
+<<<<<<< HEAD
 #include "../Automata/automata.h"
 #include "../../State/state.h"
+=======
+#include "../Alphabet/alphabet.h"
+#include "../State/state.h"
+#include "../automata.h"
+#include "PDATransition/pda-transition.h"
+>>>>>>> poo
 
-struct PDATransition {
-  State next_state;
-  std::string stack_push;
-
-  PDATransition(const State& state, const std::string& push)
-      : next_state(state), stack_push(push) {}
-};
-
-using TransitionKey = std::tuple<State, char, char>;
-
-class PDA : public Automata {
+class PDA : public Automata<PDATransitionKey, PDATransitionValue> {
 public:
+  PDA()
+      : Automata<PDATransitionKey, PDATransitionValue>(),
+        stack(),
+        stack_alphabet(),
+        initial_stack_symbol(PDA::EPSILON) {}
   virtual ~PDA() = default;
-  virtual bool isAccepted(const std::string& input) override;
-  void setStates(const std::vector<State>& states) {
-    this->states = std::set<State>(states.begin(), states.end());
+  virtual bool isAccepted(const std::string& string) = 0;
+  void setStackAlphabet(const Alphabet<char>& alphabet) {
+    stack_alphabet = alphabet;
   }
-  void setInputAlphabet(const std::set<char>& alphabet) { this->input_alphabet = alphabet; }
-  void setStackAlphabet(const std::set<char>& alphabet) { this->stack_alphabet = alphabet; }
-  void setInitialState(const State& state) { this->initial_state = state; }
-  void setInitialStackSymbol(char symbol) { this->initial_stack_symbol = symbol; }
-  void addTransition(const State& current_state, char input_symbol, char stack_top,
-                     const State& next_state, const std::string& push_string) {
-    TransitionKey key = std::make_tuple(current_state, input_symbol, stack_top);
-    PDATransition transition(next_state, push_string);
-    transitions.insert({key, transition});
+  void setInitialStackSymbol(char symbol) { initial_stack_symbol = symbol; }
+  void resetStack();
+  bool checkStackAlphabet(char symbol) {
+    return stack_alphabet.contains(symbol);
   }
 
 protected:
   std::stack<char> stack;
-  std::set<char> stack_alphabet;
+  Alphabet<char> stack_alphabet;
   char initial_stack_symbol;
-  std::multimap<TransitionKey, PDATransition> transitions;
 };
 
 #endif

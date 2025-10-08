@@ -1,0 +1,15 @@
+# Error: Estado 'q5' usado en transición pero no declarado
+
+q0 q1 q2
+
+a b
+
+S A B
+
+q0
+
+S
+
+# Transición usa q5 que no existe
+q0 a S q5 aS
+q1 b A q2 .
