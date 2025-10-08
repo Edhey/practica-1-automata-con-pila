@@ -30,6 +30,7 @@
 template <typename KeyType, typename ValueType>
 class Automata {
 public:
+  Automata() : initial_state{}, states{}, input_alphabet{} {}
   virtual ~Automata() = default;
   virtual bool isAccepted(const std::string& input) = 0;
   static constexpr char EPSILON = '.';
@@ -52,8 +53,6 @@ protected:
   Alphabet<char> input_alphabet;
 };
 
-#endif  // AUTOMATA_H
-
 template <typename KeyType, typename ValueType>
 inline State<KeyType, ValueType>* Automata<KeyType, ValueType>::getStateById(
     const std::string& id) {
@@ -74,3 +73,5 @@ inline bool Automata<KeyType, ValueType>::checkInputAlphabet(
   }
   return true;
 }
+
+#endif  // AUTOMATA_H

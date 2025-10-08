@@ -27,7 +27,7 @@ class State {
 public:
   State(const std::string& id = "q-1", bool is_final = false,
         bool is_initial = false)
-      : id_(id), is_final_(is_final), is_initial_(is_initial) {}
+      : id_(id), is_final_(is_final), is_initial_(is_initial), transitions_() {}
   ~State() = default;
 
   bool operator<(const State& other) const { return id_ < other.id_; }
@@ -44,9 +44,9 @@ public:
 
 private:
   std::string id_;
-  std::multimap<KeyType, ValueType> transitions_;
   bool is_final_ = false;
   bool is_initial_ = false;
+  std::multimap<KeyType, ValueType> transitions_;
 };
 
 #endif  // STATE_H

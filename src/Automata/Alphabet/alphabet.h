@@ -24,7 +24,7 @@
 template <typename T>
 class Alphabet {
 public:
-  Alphabet() = default;
+  Alphabet() : symbols_() {}
   ~Alphabet() = default;
 
   void addSymbol(T symbol) { symbols_.insert(symbol); }

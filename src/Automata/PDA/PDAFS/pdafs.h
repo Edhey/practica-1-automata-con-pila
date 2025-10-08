@@ -30,12 +30,17 @@
  */
 class PDAFS : public PDA {
 public:
+  PDAFS() : PDA(), final_states{} {}
   virtual ~PDAFS() = default;
   bool isAccepted(const std::string& input) override;
 
   const std::set<State<PDATransitionKey, PDATransitionValue>>& getFinalStates()
       const {
     return final_states;
+  }
+  void setFinalStates(
+      const std::set<State<PDATransitionKey, PDATransitionValue>>& states) {
+    final_states = states;
   }
 
 private:

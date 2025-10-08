@@ -18,48 +18,38 @@
 #include <fstream>
 #include <iostream>
 
-#include "Parser/args-parser.h"
 #include "PDAFactory/pda-factory.h"
+#include "Parser/args-parser.h"
 
 int main(int argc, char* argv[]) {
-  ArgsParser args(argc, argv);
+  auto args_opt = ArgsParser::parse(argc, argv);
+  if (!args_opt.has_value()) {
+    return 1;  // Error en los argumentos
+  }
+
+  ArgsParser args = args_opt.value();
 
   std::cout << "Creating automaton: "
-            << AutomataTypeHelper::toString(args.automata_type) << std::endl;
-  std::cout << "Input file: " << args.input_file << std::endl;
+            << AutomataTypeHelper::toString(args.getPDAType()) << std::endl;
+  std::cout << "Input file: " << args.getInputFile() << std::endl;
 
-  auto pda = PDAFactory::createAutomata(args.automata_type, args.input_file);
+  auto pda = PDAFactory::createAutomata(args.getPDAType(), args.getInputFile());
 
   if (!pda) {
     std::cerr << "Error: Could not create automaton" << std::endl;
     return 1;
   }
 
-  std::cout << "Automaton created successfully!" << std::endl;
+  std::cout << "Automaton created successfully!\n" << std::endl;
 
-  std::ostream* output = &std::cout;
-  std::ofstream file_output;
+  std::string input;
+  std::cout << "Enter input strings (Ctrl+D to finish):" << std::endl;
 
-  if (!args.output_file.empty()) {
-    file_output.open(args.output_file);
-    if (file_output.is_open()) {
-      output = &file_output;
-    }
-  }
-
-  std::string input = "";
-  std::cout << "\nEnter input strings or 'q.' to finish:" << std::endl;
-
-  while (input != "q.") {
-    std::cin >> input;
+  while (std::cin >> input) {
     bool accepted = pda->isAccepted(input);
-
-    *output << "String '" << input
-            << "': " << (accepted ? "✅ ACCEPTED" : "❌ REJECTED") << std::endl;
-
-    if (args.trace_mode) {
-      *output << "  [Trace information would go here]" << std::endl;
-    }
+    std::cout << "String '" << input
+              << "': " << (accepted ? "✅ ACCEPTED" : "❌ REJECTED")
+              << std::endl;
   }
 
   return 0;

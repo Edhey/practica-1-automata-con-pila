@@ -33,6 +33,11 @@
 
 class PDA : public Automata<PDATransitionKey, PDATransitionValue> {
 public:
+  PDA()
+      : Automata<PDATransitionKey, PDATransitionValue>(),
+        stack(),
+        stack_alphabet(),
+        initial_stack_symbol(PDA::EPSILON) {}
   virtual ~PDA() = default;
   virtual bool isAccepted(const std::string& string) = 0;
   void setStackAlphabet(const Alphabet<char>& alphabet) {
@@ -43,6 +48,7 @@ public:
   bool checkStackAlphabet(char symbol) {
     return stack_alphabet.contains(symbol);
   }
+
 protected:
   std::stack<char> stack;
   Alphabet<char> stack_alphabet;

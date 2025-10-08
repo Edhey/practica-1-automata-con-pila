@@ -37,6 +37,12 @@ struct PdaData {
   std::string initial_state;
   std::map<std::string, State<PDATransitionKey, PDATransitionValue>> states;
   // ! std::vector<State> final_states;
+  PdaData()
+      : input_alphabet(),
+        stack_alphabet(),
+        initial_stack_symbol(PDA::EPSILON),
+        initial_state(""),
+        states() {}
 };
 
 struct ParseError {

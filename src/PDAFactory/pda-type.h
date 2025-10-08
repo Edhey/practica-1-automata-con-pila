@@ -33,7 +33,7 @@ enum class PDAType { PDAES, PDAFS };
  */
 class AutomataTypeHelper {
 public:
-  static PDAType fromString(const std::string& text) {
+  static std::optional<PDAType> fromString(const std::string& text) {
     std::string lower_text = text;
     std::transform(lower_text.begin(), lower_text.end(), lower_text.begin(),
                    [](unsigned char c) { return std::tolower(c); });
@@ -45,9 +45,7 @@ public:
                lower_text == "finalstate") {
       return PDAType::PDAFS;
     } else {
-      throw std::invalid_argument(
-          "Unknown automata type: '" + text +
-          "'. Valid options: [es, PDAES, emptystack], [fs, PDAFS, finalstate]");
+      return std::nullopt;
     }
   }
 
