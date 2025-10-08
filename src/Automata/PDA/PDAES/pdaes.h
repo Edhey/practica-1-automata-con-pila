@@ -29,10 +29,22 @@
  */
 class PDAES : public PDA {
 public:
+  PDAES() : PDA() {}
   virtual ~PDAES() = default;
   bool isAccepted(const std::string& input) override;
-  bool isAccepted(const State<PDATransitionKey, PDATransitionValue>* state,
-                  std::stack<char> stack, std::string input);
+
+private:
+  bool isAcceptedRecursive(
+      const State<PDATransitionKey, PDATransitionValue>* state,
+      std::stack<char> stack, const std::string& input);
+  bool pushStringOntoStack(std::stack<char>& stack,
+                           const std::string& push_string);
+  bool tryInputTransitions(
+      const State<PDATransitionKey, PDATransitionValue>* state,
+      std::stack<char> stack, const std::string& input, char stack_top);
+  bool tryEpsilonTransitions(
+      const State<PDATransitionKey, PDATransitionValue>* state,
+      std::stack<char> stack, const std::string& input, char stack_top);
 };
 
 #endif  // PDAES_H
