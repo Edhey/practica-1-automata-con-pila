@@ -18,6 +18,8 @@
 
 #include "pdaes.h"
 
+#include <format>
+
 /**
  * @brief Checks if the input string is accepted by the PDA.
  * @param input The input string to be checked.
@@ -38,13 +40,13 @@ bool PDAES::isAccepted(const std::string& input) {
 bool PDAES::isAccepted(const State<PDATransitionKey, PDATransitionValue>* state,
                        std::stack<char> stack, std::string input) {
   if (stack.empty()) {
-    if (input.empty() || (input[0] == PDA::EPSILON && input.size() == 1)) { 
+    if (input.empty() || (input[0] == PDA::EPSILON && input.size() == 1)) {
       return true;
     } else {
       return false;
     }
   }
-  
+
   if (state == nullptr) {
     return false;
   }
@@ -54,10 +56,8 @@ bool PDAES::isAccepted(const State<PDATransitionKey, PDATransitionValue>* state,
     char current_symbol = input[0];
     PDATransitionKey key{current_symbol, stack_top};
 
-    const auto& transitions = state->getTransitions();
-    auto it = transitions.find(key);
-
-    if (it != transitions.end()) {
+    auto range = state->getTransitions().equal_range(key);
+    for (auto it = range.first; it != range.second; ++it) {
       const PDATransitionValue& transition = it->second;
       std::stack<char> new_stack = stack;
       new_stack.pop();
@@ -79,19 +79,19 @@ bool PDAES::isAccepted(const State<PDATransitionKey, PDATransitionValue>* state,
     }
   }
 
-  const auto& transitions = state->getTransitions();
   PDATransitionKey epsilon_key{PDA::EPSILON, stack_top};
-  auto epsilon_it = transitions.find(epsilon_key);
-
-  if (epsilon_it != transitions.end()) {
-    const PDATransitionValue& transition = epsilon_it->second;
+  auto range = state->getTransitions().equal_range(epsilon_key);
+  for (auto it = range.first; it != range.second; ++it) {
+    const PDATransitionValue& transition = it->second;
     std::stack<char> new_stack = stack;
     new_stack.pop();
     for (int i = transition.push_string.size() - 1; i >= 0; --i) {
       char symbol = transition.push_string[i];
       if (symbol != PDA::EPSILON && !checkStackAlphabet(symbol)) {
-        std::cerr << "Error: Stack symbol '" << symbol
-                  << "' not in stack alphabet" << std::endl;
+        std::cerr << std::format(
+                         "Error: Stack symbol '{}' not in stack alphabet",
+                         symbol)
+                  << std::endl;
         return false;
       }
       if (symbol != PDA::EPSILON) {

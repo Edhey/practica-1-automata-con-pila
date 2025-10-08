@@ -36,13 +36,15 @@ public:
   bool operator==(const std::string& other_id) const { return id_ == other_id; }
   const std::string& getId() const { return id_; }
   void addTransition(const KeyType& key, const ValueType& value) {
-    this->transitions_[key] = value;
+    this->transitions_.insert({key, value});
   }
-  const std::map<KeyType, ValueType>& getTransitions() const { return transitions_; }
+  const std::multimap<KeyType, ValueType>& getTransitions() const {
+    return transitions_;
+  }
 
 private:
   std::string id_;
-  std::map<KeyType, ValueType> transitions_;
+  std::multimap<KeyType, ValueType> transitions_;
   bool is_final_ = false;
   bool is_initial_ = false;
 };
