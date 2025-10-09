@@ -30,15 +30,15 @@
 #include "pda-type.h"
 
 /**
- * @brief Factory estática para crear autómatas
+ * @brief Factory class for creating Pushdown Automata (PDA) of different types.
  */
 class PDAFactory {
 public:
   /**
-   * @brief Crea un autómata del tipo especificado
-   * @param type Tipo de autómata (PDAES o PDAFS)
-   * @param filename Archivo de definición del autómata
-   * @return Puntero único al autómata creado, o nullptr si hay error
+   * @brief Creates a PDA (Pushdown Automaton) of the specified type.
+   * @param type The type of PDA to create (PDAES or PDAFS).
+   * @param filename The path to the PDA definition file.
+   * @return A unique pointer to the created PDA, or nullptr on error.
    */
   static std::unique_ptr<PDA> createAutomata(PDAType type,
                                              const std::string& filename) {

@@ -30,6 +30,9 @@
 #include "../../Automata/PDA/pda.h"
 #include "../../Automata/State/state.h"
 
+/**
+ * @brief Contains all relevant information about a PDA (Pushdown Automaton).
+ */
 struct PdaData {
   Alphabet<char> input_alphabet;
   Alphabet<char> stack_alphabet;
@@ -46,6 +49,9 @@ struct PdaData {
         final_states() {}
 };
 
+/**
+ * @brief Represents an error encountered during parsing.
+ */
 struct ParseError {
   std::string message;
   int line_number;
@@ -54,6 +60,9 @@ struct ParseError {
       : message(msg), line_number(line) {}
 };
 
+/**
+ * @brief Parses a PDA (Pushdown Automaton) definition from a file.
+ */
 class PdaParser {
 public:
   explicit PdaParser(const std::string& file_name) : file_name_(file_name) {}

@@ -25,7 +25,7 @@
 #include "../PDAFactory/pda-type.h"
 
 /**
- * @brief Clase para parsear argumentos de línea de comandos
+ * @brief Class for parsing command line arguments.
  */
 class ArgsParser {
 public:

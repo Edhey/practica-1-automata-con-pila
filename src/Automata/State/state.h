@@ -22,6 +22,15 @@
 #include <map>
 #include <vector>
 
+/**
+ * @brief Represents a state in an automaton with transitions.
+ * 
+ * @tparam KeyType Type used for transition keys.
+ * @tparam ValueType Type used for transition values.
+ * 
+ * This class models a state in an automaton, supporting identification,
+ * final/initial state flags, and a collection of transitions.
+ */
 template <typename KeyType, typename ValueType>
 class State {
 public:

@@ -46,9 +46,7 @@ public:
   bool checkInputAlphabet(const std::string& input);
 
 protected:
-  // State current_state;
   std::string initial_state;
-  // std::set<State<KeyType, ValueType>> states;
   std::map<std::string, State<KeyType, ValueType>> states;
   Alphabet<char> input_alphabet;
 };

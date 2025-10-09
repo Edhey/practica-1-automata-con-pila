@@ -56,13 +56,14 @@ private:
     ~Configuration() = default;
   };
 
-  bool pushStringOntoStack(std::stack<char>& stack, const std::string& push);
-  bool isAcceptingConfiguration(const Configuration& cfg,
+  bool pushStringOntoStack(std::stack<char>& stack,
+                           const std::string& push_string);
+  bool isAcceptingConfiguration(const Configuration& configuration,
                                 const std::string& input) const;
-  void processInputTransitions(std::queue<Configuration>& q,
+  void processInputTransitions(std::queue<Configuration>& config_queue,
                                const Configuration& current,
                                const std::string& input);
-  void processEpsilonTransitions(std::queue<Configuration>& q,
+  void processEpsilonTransitions(std::queue<Configuration>& queue,
                                  const Configuration& current);
 };
 

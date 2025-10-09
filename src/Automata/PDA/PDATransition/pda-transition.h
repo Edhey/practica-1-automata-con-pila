@@ -17,6 +17,16 @@
 
  #include <iostream>
 
+/**
+ * @struct PDATransitionKey
+ * @brief Represents a key for identifying transitions in a Pushdown Automaton (PDA).
+ * This structure holds the input symbol and the symbol at the top of the stack,
+ * which together uniquely identify a transition in the PDA.
+ *
+ * The less-than operator is overloaded to allow PDATransitionKey objects to be
+ * used as keys in associative containers, such as std::map, by comparing both
+ * the input symbol and the stack top symbol.
+ */
 struct PDATransitionKey {
   char input_symbol;
   char stack_top;
@@ -27,6 +37,13 @@ struct PDATransitionKey {
   }
 };
 
+/**
+ * @struct PDATransitionValue
+ * @brief Represents the value of a transition in a Pushdown Automaton (PDA).
+ *
+ * Contains the identifier of the next state and the string to be pushed onto the stack
+ * during the transition.
+ */
 struct PDATransitionValue {
   std::string next_state_id;
   std::string push_string;

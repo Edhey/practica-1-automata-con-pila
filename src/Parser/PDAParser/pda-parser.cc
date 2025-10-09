@@ -17,6 +17,20 @@
 
 #include "pda-parser.h"
 
+/**
+ * @brief Parses a PDA (Pushdown Automaton) definition from a file.
+ *
+ * This function reads the PDA specification from the file specified by
+ * `file_name_` and constructs a PdaData object containing all relevant
+ * information about the automaton, such as states, input alphabet, stack
+ * alphabet, initial state, initial stack symbol, and transitions. If any
+ * parsing error occurs, an appropriate ParseError is returned.
+ *
+ * @return std::expected<PdaData, ParseError>
+ *         On success, returns a PdaData object containing the parsed PDA
+ * information. On failure, returns a ParseError describing the issue
+ * encountered during parsing.
+ */
 std::expected<PdaData, ParseError> PdaParser::parse() {
   std::ifstream file(file_name_);
   if (!file.is_open()) {
@@ -157,6 +171,14 @@ PdaParser::parseStates(std::ifstream& file, int& line_number) {
   return states;
 }
 
+/**
+ * @brief Parses the input alphabet from the given file stream.
+ * @param file The input file stream to read from.
+ * @param line_number Reference to the current line number, which will be
+ * incremented.
+ * @return An expected Alphabet<char> object containing the parsed input
+ * alphabet or a ParseError.
+ */
 std::expected<Alphabet<char>, ParseError> PdaParser::parseInputAlphabet(
     std::ifstream& file, int& line_number) {
   std::string line;
@@ -239,6 +261,22 @@ std::expected<char, ParseError> PdaParser::parseInitialStackSymbol(
   return tokens[0][0];
 }
 
+/**
+ * @brief Parses the initial state from the given file stream.
+ *
+ * This function reads the next non-comment line from the provided file stream,
+ * expecting it to contain the initial state identifier for the PDA. It
+ * validates that the line contains exactly one token and that the token
+ * corresponds to a defined state in the provided states map.
+ *
+ * @param file Reference to the input file stream to read from.
+ * @param line_number Reference to the current line number, which will be
+ * incremented.
+ * @param states Map of state identifiers to their corresponding State objects.
+ * @return std::expected<std::string, ParseError>
+ *         On success, returns the initial state identifier as a string.
+ *         On failure, returns a ParseError describing the issue.
+ */
 std::expected<std::string, ParseError> PdaParser::parseInitialState(
     std::ifstream& file, int& line_number,
     const std::map<std::string, State<PDATransitionKey, PDATransitionValue>>&
@@ -264,6 +302,26 @@ std::expected<std::string, ParseError> PdaParser::parseInitialState(
   return tokens[0];
 }
 
+/**
+ * @brief Parses PDA transitions from a file stream and populates the states
+ * map.
+ *
+ * Reads lines from the given file, skipping comments, and expects each
+ * transition to be described by five components: current state, input symbol,
+ * stack top symbol, next state, and push string. Validates each component
+ * against the provided input and stack alphabets, and ensures that referenced
+ * states exist. Adds valid transitions to the corresponding state.
+ *
+ * @param file Input file stream containing PDA transitions.
+ * @param line_number Reference to the current line number, updated as lines are
+ * read.
+ * @param states Map of state identifiers to State objects, transitions are
+ * added here.
+ * @param stack_alphabet Pointer to the stack alphabet for symbol validation.
+ * @param input_alphabet Pointer to the input alphabet for symbol validation.
+ * @return std::expected<void, ParseError> Returns std::unexpected(ParseError)
+ * on error, or an empty expected on success.
+ */
 std::expected<void, ParseError> PdaParser::parseTransitions(
     std::ifstream& file, int& line_number,
     std::map<std::string, State<PDATransitionKey, PDATransitionValue>>& states,

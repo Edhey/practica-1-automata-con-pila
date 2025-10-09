@@ -31,6 +31,15 @@
 #include "../automata.h"
 #include "PDATransition/pda-transition.h"
 
+/**
+ * @class PDA
+ * @brief Represents a Pushdown Automaton (PDA), inheriting from Automata.
+ *
+ * This abstract class models a pushdown automaton, which is an automaton
+ * equipped with a stack. It provides basic stack operations, stack alphabet
+ * management, and enforces implementation of the acceptance condition for input
+ * strings.
+ */
 class PDA : public Automata<PDATransitionKey, PDATransitionValue> {
 public:
   PDA()
