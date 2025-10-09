@@ -117,6 +117,6 @@ I created also a derived class `PDA` that extends `Automata` and adds stack mana
 
 Finally, I implemented two specific PDA types: `PDAES` for acceptance by empty stack and `PDAFS` for acceptance by final state. The `PDAES` class uses a recursive approach to explore all possible transitions, while the `PDAFS` class employs an iterative breadth-first search (BFS) strategy to find an accepting path using a queue.
 
-Finally I created a `PdaParser` class to handle the parsing of the input file and the instantiation of the appropriate PDA type based on the file's content. This is a base class that uses the template method pattern to define the steps for parsing, while allowing subclasses to implement specific parsing logic for different PDA types (in this case PDAES and PDAFS).
+Finally I created a `PdaParser` class to handle the parsing of the input file and the instantiation of the appropriate PDA type based on the file's content. This is a base class that uses the template method pattern to define the steps for parsing, while allowing subclasses to implement specific parsing logic for different PDA types (in this case PDAES and PDAFS). It checks for the correct format and populates the automaton's states, transitions, and other attributes.
 
 This modular design allowed me to use the Factory Method pattern to create instances of the specific PDA types based on the input file, using polymorphism to handle different PDA behaviors through a common interface.
