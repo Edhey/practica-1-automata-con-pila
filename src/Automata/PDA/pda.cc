@@ -17,6 +17,12 @@
 
 #include "pda.h"
 
+/**
+ * @brief Resets the stack to its initial state.
+ *
+ * This function clears all elements from the stack and pushes the initial stack symbol
+ * to ensure the stack starts with the correct configuration for the automaton.
+ */
 void PDA::resetStack() {
   while (!stack.empty()) {
     stack.pop();

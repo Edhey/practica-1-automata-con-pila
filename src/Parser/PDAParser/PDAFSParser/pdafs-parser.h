@@ -20,6 +20,13 @@
 
 #include "../pda-parser.h"
 
+/**
+ * @class PdaFSParser
+ * @brief Specialized parser for Finite State Pushdown Automata (FS-PDA)
+ * configuration files. Inherits from PdaParser and provides specific parsing
+ * logic for FS-PDA data. The parser reads automaton definitions from a file and
+ * populates a PdaData structure.
+ */
 class PdaFSParser : public PdaParser {
 public:
   explicit PdaFSParser(const std::string& file_name) : PdaParser(file_name) {}

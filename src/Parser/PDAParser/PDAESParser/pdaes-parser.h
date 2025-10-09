@@ -20,6 +20,12 @@
 
 #include "../pda-parser.h"
 
+/**
+ * @class PdaESParser
+ * @brief Specialized parser for Extended Stack (ES) PDA data.
+ * Inherits from PdaParser and provides implementation for parsing
+ * specific data related to ES PDAs from a file.
+ */
 class PdaESParser : public PdaParser {
 public:
   explicit PdaESParser(const std::string& file_name) : PdaParser(file_name) {}

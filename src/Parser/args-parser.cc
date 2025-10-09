@@ -1,5 +1,11 @@
 #include "args-parser.h"
 
+/**
+ * @brief Parses command-line arguments for the automata simulator.
+ * @param argc Number of command-line arguments
+ * @param argv Array of command-line argument strings
+ * @return std::optional<ArgsParser> Parsed arguments or std::nullopt on error
+ */
 std::optional<ArgsParser> ArgsParser::parse(int argc, char* argv[]) {
   if (argc < 3) {
     printUsage(argv[0]);
@@ -9,7 +15,6 @@ std::optional<ArgsParser> ArgsParser::parse(int argc, char* argv[]) {
 
   ArgsParser args;
 
-  // Parsear tipo de autómata
   auto type_opt = AutomataTypeHelper::fromString(argv[1]);
   if (!type_opt.has_value()) {
     std::cerr << "Error: Invalid automata type '" << argv[1] << "'\n";
@@ -17,10 +22,8 @@ std::optional<ArgsParser> ArgsParser::parse(int argc, char* argv[]) {
     return std::nullopt;
   }
   args.pda_type = type_opt.value();
-
   args.input_file = argv[2];
 
-  // Parsear opciones
   for (int i = 3; i < argc; ++i) {
     std::string arg = argv[i];
 
@@ -45,6 +48,10 @@ std::optional<ArgsParser> ArgsParser::parse(int argc, char* argv[]) {
   return args;
 }
 
+/**
+ * @brief Prints usage information for the program.
+ * @param program_name Name of the executable program.
+ */
 void ArgsParser::printUsage(const char* program_name) {
   std::cout << "Usage: " << program_name << " <type> <input_file> [options]\n\n"
             << "Arguments:\n"

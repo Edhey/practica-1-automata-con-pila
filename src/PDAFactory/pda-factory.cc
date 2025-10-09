@@ -17,6 +17,11 @@
 
 #include "pda-factory.h"
 
+/**
+ * @brief Creates a PDA (Pushdown Automaton) of type ES (Empty Stack).
+ * @param filename Path to the PDA definition file.
+ * @return A unique pointer to the created PDA, or nullptr on error.
+ */
 std::unique_ptr<PDA> PDAFactory::createPDAES(const std::string& filename) {
   PdaESParser parser(filename);
   auto data = parser.parse();
@@ -37,6 +42,11 @@ std::unique_ptr<PDA> PDAFactory::createPDAES(const std::string& filename) {
   return pda;
 }
 
+/**
+ * @brief Creates a PDA (Pushdown Automaton) of type FS (Final State).
+ * @param filename Path to the PDA definition file.
+ * @return A unique pointer to the created PDA, or nullptr on error.
+ */
 std::unique_ptr<PDA> PDAFactory::createPDAFS(const std::string& filename) {
   PdaFSParser parser(filename);
   auto data = parser.parse();
