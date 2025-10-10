@@ -63,12 +63,37 @@ std::ostream& PDA::printConfiguration(
     const std::string& input, int depth) const {
   std::string input_display =
       input.empty() ? std::string(1, PDA::EPSILON) : input;
+  std::string transitions_str;
+  if (!input.empty() && !stack.empty()) {
+    auto [begin, end] = state.getTransitions().equal_range(
+        PDATransitionKey{input[0], stack.top()});
+
+    if (begin != end) {
+      transitions_str = PDATransitionPrinter::formatTransition(begin, end);
+    }
+  }
+  if (!stack.empty()) {
+    auto [eps_begin, eps_end] = state.getTransitions().equal_range(
+        PDATransitionKey{PDA::EPSILON, stack.top()});
+
+    if (eps_begin != eps_end) {
+      std::string epsilon_str =
+          PDATransitionPrinter::formatTransition(eps_begin, eps_end);
+
+      if (!transitions_str.empty()) {
+        transitions_str += " || " + epsilon_str;
+      } else {
+        transitions_str = epsilon_str;
+      }
+    }
+  }
+  if (transitions_str.empty()) {
+    transitions_str = PDA::EPSILON;
+  }
   out << std::left << " | " << std::setw(15) << state.getId() << " | "
       << std::setw(15) << input_display << " | " << std::setw(15)
       << stackToString(stack) << " | " << std::setw(15) << depth << " | "
-      << std::setw(15)
-      << PDATransitionPrinter::formatTransition(state.getTransitions());
-  out << " |\n";
+      << transitions_str << " |\n";
   return out;
 }
 

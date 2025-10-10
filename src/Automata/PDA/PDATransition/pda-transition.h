@@ -52,6 +52,27 @@ struct PDATransitionValue {
 };
 
 namespace PDATransitionPrinter {
+template <typename Iterator>
+inline std::string formatTransition(Iterator begin, Iterator end) {
+  if (begin == end) {
+    return "No transitions";
+  }
+
+  std::string transition_str;
+  for (auto it = begin; it != end; ++it) {
+    const auto& [key, value] = *it;
+    transition_str +=
+        std::format("('{}','{}')->('{}','{}') || ", key.input_symbol,
+                    key.stack_top, value.next_state_id, value.push_string);
+  }
+
+  // Eliminar el último " || "
+  if (!transition_str.empty()) {
+    return transition_str.substr(0, transition_str.size() - 4);
+  }
+  return "No transitions";
+}
+
 inline std::string formatTransition(
     const std::multimap<PDATransitionKey, PDATransitionValue>& transitions) {
   std::string transition_str;

@@ -62,7 +62,7 @@ bool PDAFS::isAcceptingConfiguration(const Configuration& configuration,
   return final_states.find(configuration.state->getId()) != final_states.end();
 }
 
-void PDAFS::processInputTransitions(std::queue<Configuration>& q,
+void PDAFS::processInputTransitions(std::queue<Configuration>& queue,
                                     const Configuration& current,
                                     const std::string& input) {
   if (current.input_position >= input.size())
@@ -86,7 +86,7 @@ void PDAFS::processInputTransitions(std::queue<Configuration>& q,
     State<PDATransitionKey, PDATransitionValue>* next_state =
         getStateById(transition.next_state_id);
     if (next_state != nullptr) {
-      q.push(Configuration(next_state, new_stack, current.input_position + 1));
+      queue.push(Configuration(next_state, new_stack, current.input_position + 1));
     }
   }
 }
@@ -153,7 +153,6 @@ bool PDAFS::isAccepted(
     return false;
   }
   this->resetStack();
-
   State<PDATransitionKey, PDATransitionValue>* initial_state =
       this->getStateById(this->initial_state);
   if (initial_state == nullptr) {
