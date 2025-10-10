@@ -1,0 +1,13 @@
+.
+a
+b
+ab
+ba
+aaa
+abab
+aabb
+aaabbb
+aaaabbbb
+bbaa
+aaabb
+aabbb

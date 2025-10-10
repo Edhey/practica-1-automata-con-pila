@@ -24,9 +24,9 @@
 #include "../Automata/PDA/PDAES/pdaes.h"
 #include "../Automata/PDA/PDAFS/pdafs.h"
 #include "../Automata/PDA/pda.h"
-#include "../Parser/PDAParser/pda-parser.h"
 #include "../Parser/PDAParser/PDAESParser/pdaes-parser.h"
 #include "../Parser/PDAParser/PDAFSParser/pdafs-parser.h"
+#include "../Parser/PDAParser/pda-parser.h"
 #include "pda-type.h"
 
 /**
@@ -40,13 +40,13 @@ public:
    * @param filename The path to the PDA definition file.
    * @return A unique pointer to the created PDA, or nullptr on error.
    */
-  static std::unique_ptr<PDA> createAutomata(PDAType type,
+  static std::unique_ptr<PDA> createAutomata(AutomataType type,
                                              const std::string& filename) {
     switch (type) {
-    case PDAType::PDAES: {
-      return createPDAES(filename);     
+    case AutomataType::PDAES: {
+      return createPDAES(filename);
     }
-    case PDAType::PDAFS: {
+    case AutomataType::PDAFS: {
       return createPDAFS(filename);
     }
     default:

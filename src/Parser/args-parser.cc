@@ -1,67 +1,100 @@
+/**
+ * Universidad de La Laguna
+ * Escuela Superior de Ingeniería y Tecnología
+ * Grado en Ingeniería Informática
+ * Asignatura: Complejidad Computacional
+ * Curso: 4º
+ * Práctica 1: Pushdown Automaton Simulator
+ * @author Himar Edhey Hernández Alonso
+ * Correo: alu0101552392@ull.edu.es
+ * @date Sep 15 2025
+ * @file args-parser.cc
+ * @brief Implementation of the class ArgsParser
+ * @bug There are no known bugs
+ * @see https://github.com/Edhey/practica-1-automata-con-pila.git
+ * Revision history:
+ */
+
 #include "args-parser.h"
 
-/**
- * @brief Parses command-line arguments for the automata simulator.
- * @param argc Number of command-line arguments
- * @param argv Array of command-line argument strings
- * @return std::optional<ArgsParser> Parsed arguments or std::nullopt on error
- */
+#include <iostream>
+
+void ArgsParser::printUsage() {
+  std::cout
+      << "Usage: stack-automaton <mode> <input_file.txt> [options]\n\n"
+      << "Modes:\n"
+      << "  <es|PDAES|emptystack> - Empty Stack PDA\n"
+      << "  <fs|PDAFS|finalstate> - Final State PDA\n\n"
+      << "Options:\n"
+      << "  -i, --input <file>     Read input strings from file\n"
+      << "  -o, --output <file>    Write results to file\n"
+      << "  -t, --trace            Enable execution trace\n"
+      << "  -h, --help             Show this help message\n\n"
+      << "Examples:\n"
+      << "  stack-automaton es automaton.txt\n"
+      << "  stack-automaton fs automaton.txt -i strings.txt -o results.txt\n"
+      << "  stack-automaton PDAES automaton.txt --trace\n"
+      << "  stack-automaton PDAFS automaton.txt -i strings.txt -t -o trace.txt\n"
+      << std::endl;
+}
+
 std::optional<ArgsParser> ArgsParser::parse(int argc, char* argv[]) {
   if (argc < 3) {
-    printUsage(argv[0]);
-    std::cerr << "Error: Insufficient arguments\n";
+    std::cerr << "Error: Insufficient arguments\n" << std::endl;
+    printUsage();
     return std::nullopt;
   }
 
-  ArgsParser args;
+  for (int i = 1; i < argc; ++i) {
+    std::string arg = argv[i];
+    if (arg == "-h" || arg == "--help") {
+      printUsage();
+      return std::nullopt;
+    }
+  }
 
-  auto type_opt = AutomataTypeHelper::fromString(argv[1]);
-  if (!type_opt.has_value()) {
-    std::cerr << "Error: Invalid automata type '" << argv[1] << "'\n";
-    printUsage(argv[0]);
+  std::string mode = argv[1];
+  AutomataType type;
+
+  if (mode == "es") {
+    type = AutomataType::PDAES;
+  } else if (mode == "fs") {
+    type = AutomataType::PDAFS;
+  } else {
+    std::cerr << "Error: Invalid mode '" << mode << "'\n" << std::endl;
+    printUsage();
     return std::nullopt;
   }
-  args.pda_type = type_opt.value();
-  args.input_file = argv[2];
+
+  std::string input_file = argv[2];
+  std::optional<std::string> input_strings_file;
+  std::optional<std::string> output_file;
+  bool trace_enabled = false;
 
   for (int i = 3; i < argc; ++i) {
     std::string arg = argv[i];
 
-    if (arg == "-o" || arg == "--output") {
-      if (i + 1 < argc) {
-        args.output_file = argv[++i];
-      } else {
-        std::cerr << "Error: Option -o/--output requires an argument\n";
-        printUsage(argv[0]);
+    if (arg == "-i" || arg == "--input") {
+      if (i + 1 >= argc) {
+        std::cerr << "Error: Missing argument for " << arg << std::endl;
         return std::nullopt;
       }
+      input_strings_file = argv[++i];
+    } else if (arg == "-o" || arg == "--output") {
+      if (i + 1 >= argc) {
+        std::cerr << "Error: Missing argument for " << arg << std::endl;
+        return std::nullopt;
+      }
+      output_file = argv[++i];
     } else if (arg == "-t" || arg == "--trace") {
-      args.trace_mode = true;
-    } else if (arg == "-h" || arg == "--help") {
-      printUsage(argv[0]);
-      std::exit(0);
+      trace_enabled = true;
     } else {
-      std::cerr << "Warning: Unknown option '" << arg << "'\n";
+      std::cerr << "Error: Unknown option '" << arg << "'\n" << std::endl;
+      printUsage();
+      return std::nullopt;
     }
   }
 
-  return args;
-}
-
-/**
- * @brief Prints usage information for the program.
- * @param program_name Name of the executable program.
- */
-void ArgsParser::printUsage(const char* program_name) {
-  std::cout << "Usage: " << program_name << " <type> <input_file> [options]\n\n"
-            << "Arguments:\n"
-            << "  <type>         Automata type: es|fs|PDAES|PDAFS\n"
-            << "  <input_file>   Path to the automata definition file\n\n"
-            << "Options:\n"
-            << "  -o, --output <file>   Write trace/results to file\n"
-            << "  -t, --trace           Enable trace mode\n"
-            << "  -h, --help            Show this help message\n\n"
-            << "Examples:\n"
-            << "  " << program_name << " es automata.pda\n"
-            << "  " << program_name << " PDAFS automata.pda -o output.txt -t\n";
+  return ArgsParser(type, input_file, input_strings_file, output_file,
+                    trace_enabled);
 }
