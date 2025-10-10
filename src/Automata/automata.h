@@ -18,6 +18,8 @@
 #ifndef AUTOMATA_H
 #define AUTOMATA_H
 
+#include <map>
+#include <optional>
 #include <set>
 #include <string>
 
@@ -32,7 +34,9 @@ class Automata {
 public:
   Automata() : initial_state{}, states{}, input_alphabet{} {}
   virtual ~Automata() = default;
-  virtual bool isAccepted(const std::string& input) = 0;
+  virtual bool isAccepted(const std::string& input,
+                          std::optional<std::reference_wrapper<std::ostream>>
+                              trace = std::nullopt) = 0;
   static constexpr char EPSILON = '.';
   void setInitialState(const std::string& state) { initial_state = state; }
   void setStates(

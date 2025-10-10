@@ -143,7 +143,9 @@ void PDAFS::processEpsilonTransitions(std::queue<Configuration>& config_queue,
  * @return true if the input string is accepted by the automaton, false
  * otherwise.
  */
-bool PDAFS::isAccepted(const std::string& input) {
+bool PDAFS::isAccepted(
+    const std::string& input,
+    std::optional<std::reference_wrapper<std::ostream>> trace) {
   if (!this->checkInputAlphabet(input)) {
     std::cerr
         << "Error: Input string contains symbols not in the input alphabet"

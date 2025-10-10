@@ -15,13 +15,15 @@
  * Revision history:
  */
 
- #include <iostream>
+#include <format>
+#include <iostream>
+#include <map>
 
 /**
  * @struct PDATransitionKey
- * @brief Represents a key for identifying transitions in a Pushdown Automaton (PDA).
- * This structure holds the input symbol and the symbol at the top of the stack,
- * which together uniquely identify a transition in the PDA.
+ * @brief Represents a key for identifying transitions in a Pushdown Automaton
+ * (PDA). This structure holds the input symbol and the symbol at the top of the
+ * stack, which together uniquely identify a transition in the PDA.
  *
  * The less-than operator is overloaded to allow PDATransitionKey objects to be
  * used as keys in associative containers, such as std::map, by comparing both
@@ -41,10 +43,23 @@ struct PDATransitionKey {
  * @struct PDATransitionValue
  * @brief Represents the value of a transition in a Pushdown Automaton (PDA).
  *
- * Contains the identifier of the next state and the string to be pushed onto the stack
- * during the transition.
+ * Contains the identifier of the next state and the string to be pushed onto
+ * the stack during the transition.
  */
 struct PDATransitionValue {
   std::string next_state_id;
   std::string push_string;
 };
+
+namespace PDATransitionPrinter {
+inline std::string formatTransition(
+    const std::multimap<PDATransitionKey, PDATransitionValue>& transitions) {
+  std::string transition_str;
+  for (const auto& [key, value] : transitions) {
+    transition_str +=
+        std::format("('{}','{}') -> ('{}','{}') || ", key.input_symbol,
+                    key.stack_top, value.next_state_id, value.push_string);
+  }
+  return transition_str.substr(0, transition_str.size() - 4);
+}
+}  // namespace PDATransitionPrinter

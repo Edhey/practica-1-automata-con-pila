@@ -53,10 +53,12 @@ bool PDAES::pushStringOntoStack(std::stack<char>& stack,
  */
 bool PDAES::tryInputTransitions(
     const State<PDATransitionKey, PDATransitionValue>* state,
-    std::stack<char> stack, const std::string& input, char stack_top) {
+    std::stack<char> stack, const std::string& input, char stack_top,
+    std::optional<std::reference_wrapper<std::ostream>> trace, int depth) {
   if (input.empty())
     return false;
-
+  
+  depth++;
   char current_symbol = input[0];
   PDATransitionKey key{current_symbol, stack_top};
 
@@ -71,7 +73,7 @@ bool PDAES::tryInputTransitions(
       return false;
 
     if (isAcceptedRecursive(this->getStateById(transition.next_state_id),
-                            new_stack, input.substr(1))) {
+                            new_stack, input.substr(1), trace, depth)) {
       return true;
     }
   }
@@ -89,9 +91,10 @@ bool PDAES::tryInputTransitions(
  */
 bool PDAES::tryEpsilonTransitions(
     const State<PDATransitionKey, PDATransitionValue>* state,
-    std::stack<char> stack, const std::string& input, char stack_top) {
+    std::stack<char> stack, const std::string& input, char stack_top,
+    std::optional<std::reference_wrapper<std::ostream>> trace, int depth) {
   PDATransitionKey epsilon_key{PDA::EPSILON, stack_top};
-
+  depth++;
   auto range = state->getTransitions().equal_range(epsilon_key);
 
   for (auto it = range.first; it != range.second; ++it) {
@@ -104,7 +107,7 @@ bool PDAES::tryEpsilonTransitions(
       return false;
 
     if (isAcceptedRecursive(this->getStateById(transition.next_state_id),
-                            new_stack, input)) {
+                            new_stack, input, trace, depth)) {
       return true;
     }
   }
@@ -121,7 +124,12 @@ bool PDAES::tryEpsilonTransitions(
  */
 bool PDAES::isAcceptedRecursive(
     const State<PDATransitionKey, PDATransitionValue>* state,
-    std::stack<char> stack, const std::string& input) {
+    std::stack<char> stack, const std::string& input,
+    std::optional<std::reference_wrapper<std::ostream>> trace, int depth) {
+  if (trace.has_value()) {
+    this->printConfiguration(*trace, stack, *state, input, depth);
+  }
+
   if (stack.empty()) {
     return input.empty();
   }
@@ -131,11 +139,11 @@ bool PDAES::isAcceptedRecursive(
   }
   const char stack_top = stack.top();
 
-  if (tryInputTransitions(state, stack, input, stack_top)) {
+  if (tryInputTransitions(state, stack, input, stack_top, trace, depth)) {
     return true;
   }
 
-  if (tryEpsilonTransitions(state, stack, input, stack_top)) {
+  if (tryEpsilonTransitions(state, stack, input, stack_top, trace, depth)) {
     return true;
   }
 
@@ -147,7 +155,9 @@ bool PDAES::isAcceptedRecursive(
  * @param input The input string to be checked.
  * @return True if the input is accepted, false otherwise.
  */
-bool PDAES::isAccepted(const std::string& input) {
+bool PDAES::isAccepted(
+    const std::string& input,
+    std::optional<std::reference_wrapper<std::ostream>> trace) {
   if (!this->checkInputAlphabet(input)) {
     std::cerr
         << "Error: Input string contains symbols not in the input alphabet"
@@ -156,6 +166,10 @@ bool PDAES::isAccepted(const std::string& input) {
   }
 
   this->resetStack();
+  if (trace.has_value()) {
+    this->printHeader(*trace);
+  }
+  const int depth = 0;
   return isAcceptedRecursive(this->getStateById(this->initial_state),
-                             this->stack, input);
+                             this->stack, input, trace, depth);
 }

@@ -31,20 +31,25 @@ class PDAES : public PDA {
 public:
   PDAES() : PDA() {}
   virtual ~PDAES() = default;
-  bool isAccepted(const std::string& input) override;
+  bool isAccepted(
+      const std::string& input,
+      std::optional<std::reference_wrapper<std::ostream>> trace) override;
 
 private:
   bool isAcceptedRecursive(
       const State<PDATransitionKey, PDATransitionValue>* state,
-      std::stack<char> stack, const std::string& input);
+      std::stack<char> stack, const std::string& input,
+      std::optional<std::reference_wrapper<std::ostream>> trace, int depth = 0);
   bool pushStringOntoStack(std::stack<char>& stack,
                            const std::string& push_string);
   bool tryInputTransitions(
       const State<PDATransitionKey, PDATransitionValue>* state,
-      std::stack<char> stack, const std::string& input, char stack_top);
+      std::stack<char> stack, const std::string& input, char stack_top,
+      std::optional<std::reference_wrapper<std::ostream>> trace, int depth);
   bool tryEpsilonTransitions(
       const State<PDATransitionKey, PDATransitionValue>* state,
-      std::stack<char> stack, const std::string& input, char stack_top);
+      std::stack<char> stack, const std::string& input, char stack_top,
+      std::optional<std::reference_wrapper<std::ostream>> trace, int depth);
 };
 
 #endif  // PDAES_H

@@ -33,7 +33,9 @@ class PDAFS : public PDA {
 public:
   PDAFS() : PDA(), final_states{} {}
   virtual ~PDAFS() = default;
-  bool isAccepted(const std::string& input) override;
+  bool isAccepted(
+      const std::string& input,
+      std::optional<std::reference_wrapper<std::ostream>> trace) override;
 
   const std::set<std::string>& getFinalStates() const { return final_states; }
   void setFinalStates(const std::set<std::string>& states) {

@@ -34,9 +34,8 @@
 template <typename KeyType, typename ValueType>
 class State {
 public:
-  State(const std::string& id = "q-1", bool is_final = false,
-        bool is_initial = false)
-      : id_(id), is_final_(is_final), is_initial_(is_initial), transitions_() {}
+  State(const std::string& id = "q-1")
+      : id_(id), transitions_() {}
   ~State() = default;
 
   bool operator<(const State& other) const { return id_ < other.id_; }
@@ -50,11 +49,8 @@ public:
   const std::multimap<KeyType, ValueType>& getTransitions() const {
     return transitions_;
   }
-
 private:
   std::string id_;
-  bool is_final_ = false;
-  bool is_initial_ = false;
   std::multimap<KeyType, ValueType> transitions_;
 };
 
