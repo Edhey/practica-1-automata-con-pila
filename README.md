@@ -117,6 +117,11 @@ I created also a derived class `PDA` that extends `Automata` and adds stack mana
 
 Finally, I implemented two specific PDA types: `PDAES` for acceptance by empty stack and `PDAFS` for acceptance by final state. The `PDAES` class uses a recursive approach to explore all possible transitions, while the `PDAFS` class employs an iterative breadth-first search (BFS) strategy to find an accepting path using a queue.
 
-Finally I created a `PdaParser` class to handle the parsing of the input file and the instantiation of the appropriate PDA type based on the file's content. This is a base class that uses the template method pattern to define the steps for parsing, while allowing subclasses to implement specific parsing logic for different PDA types (in this case PDAES and PDAFS). It checks for the correct format and populates the automaton's states, transitions, and other attributes.
+I also created a `PdaParser` class to handle the parsing of the input file and the instantiation of the appropriate PDA type based on the file's content. This is a base class that uses the template method pattern to define the steps for parsing, while allowing subclasses to implement specific parsing logic for different PDA types (in this case PDAES and PDAFS). It checks for the correct format and populates the automaton's states, transitions, and other attributes.
+
+For the trace functionality, I added an optional output stream parameter to the `isAccepted` method in both PDA types. If trace mode is enabled, the current configuration (state, remaining input, stack content and posible transitions) is printed at each step of the computation. The trace was implemented only in the `PDAES` recursive isAccepted method, as it is more straightforward to show the recursive calls and stack changes. The PDAFS method could be extended similarly but it was not implemented cause time constraints.
 
 This modular design allowed me to use the Factory Method pattern to create instances of the specific PDA types based on the input file, using polymorphism to handle different PDA behaviors through a common interface.
+
+## IA Use
+This project is self-made, but I used AI tools, in this case Copilot, to help me in the development of some parts of the code. Mainly for writing boilerplate code and for suggesting improvements in certain functions.
