@@ -26,37 +26,37 @@
 /**
  * @brief Enum for different pushdown automata types
  */
-enum class PDAType { PDAES, PDAFS };
+enum class AutomataType { PDAES, PDAFS };
 
 /**
- * @brief Helper class for PDAType
+ * @brief Helper class for AutomataType
  */
 class AutomataTypeHelper {
 public:
-  static std::optional<PDAType> fromString(const std::string& text) {
+  static std::optional<AutomataType> fromString(const std::string& text) {
     std::string lower_text = text;
     std::transform(lower_text.begin(), lower_text.end(), lower_text.begin(),
                    [](unsigned char c) { return std::tolower(c); });
 
     if (lower_text == "es" || lower_text == "pdaes" ||
         lower_text == "emptystack") {
-      return PDAType::PDAES;
+      return AutomataType::PDAES;
     } else if (lower_text == "fs" || lower_text == "pdafs" ||
                lower_text == "finalstate") {
-      return PDAType::PDAFS;
+      return AutomataType::PDAFS;
     } else {
       return std::nullopt;
     }
   }
 
   /**
-   * @brief Transforms a PDAType enum to its string representation
+   * @brief Transforms a AutomataType enum to its string representation
    */
-  static std::string toString(PDAType type) {
+  static std::string toString(AutomataType type) {
     switch (type) {
-    case PDAType::PDAES:
+    case AutomataType::PDAES:
       return "PDAES (Empty Stack)";
-    case PDAType::PDAFS:
+    case AutomataType::PDAFS:
       return "PDAFS (Final State)";
     default:
       return "Unknown";

@@ -1,7 +1,7 @@
-# Autómata de Pila - Práctica 1
-**Author:** Himar Edhey Hernández Alonso
-**Subject:** Complejidad Computacional
-
+# PushDown Automaton - Practice 1
+- **Author:** Himar Edhey Hernández Alonso
+- **Subject:** Complejidad Computacional
+- **Repository:** [GitHub Link](https://github.com/Edhey/practica-1-automata-con-pila.git)
 ---
 
 ## Introduction
@@ -31,20 +31,23 @@ cmake -DCMAKE_BUILD_TYPE=Debug ..
 cmake -DCMAKE_BUILD_TYPE=Release ..
 
 # The executable will be: build/stack-automaton
-Usage: ./stack-automaton <type> <input_file> [options]
+Usage: stack-automaton <mode> <automaton_file.txt> [options]
 
-Arguments:
-  <type>         Automata type: es|fs|PDAES|PDAFS
-  <input_file>   Path to the automata definition file
+Modes:
+  <es|PDAES|emptystack> - Empty Stack PDA
+  <fs|PDAFS|finalstate> - Final State PDA
 
 Options:
-  -o, --output <file>   Write trace/results to file
-  -t, --trace           Enable trace mode
-  -h, --help            Show this help message
+  -i, --input <file>     Read input strings from file
+  -o, --output <file>    Write results to file
+  -t, --trace            Enable execution trace
+  -h, --help             Show this help message
 
 Examples:
-  ./stack-automaton es automata.pda
-  ./stack-automaton PDAFS automata.pda
+  stack-automaton es automaton.txt
+  stack-automaton fs automaton.txt -i strings.txt -o results.txt
+  stack-automaton PDAES automaton.txt --trace
+  stack-automaton PDAFS automaton.txt -i strings.txt -t -o trace.txt
 ```
 
 ---
@@ -117,11 +120,12 @@ I created also a derived class `PDA` that extends `Automata` and adds stack mana
 
 Finally, I implemented two specific PDA types: `PDAES` for acceptance by empty stack and `PDAFS` for acceptance by final state. The `PDAES` class uses a recursive approach to explore all possible transitions, while the `PDAFS` class employs an iterative breadth-first search (BFS) strategy to find an accepting path using a queue.
 
-I also created a `PdaParser` class to handle the parsing of the input file and the instantiation of the appropriate PDA type based on the file's content. This is a base class that uses the template method pattern to define the steps for parsing, while allowing subclasses to implement specific parsing logic for different PDA types (in this case PDAES and PDAFS). It checks for the correct format and populates the automaton's states, transitions, and other attributes.
+I also created a `PdaParser` class to handle the parsing of the input file and the instantiation of the appropriate PDA type based on the file's content. This is a base class that uses the template method pattern to define the steps for parsing, while allowing subclasses to implement specific parsing logic for different PDA types (in this case PDAES and PDAFS). It checks for the correct format and populates the automaton's states, transitions, and other attributes. This modular design allowed me to use the Factory Method pattern to create instances of the specific PDA types based on the input file, using polymorphism to handle different Automatons through a common interface.
 
-For the trace functionality, I added an optional output stream parameter to the `isAccepted` method in both PDA types. If trace mode is enabled, the current configuration (state, remaining input, stack content and posible transitions) is printed at each step of the computation. The trace was implemented only in the `PDAES` recursive isAccepted method, as it is more straightforward to show the recursive calls and stack changes. The PDAFS method could be extended similarly but it was not implemented cause time constraints.
 
-This modular design allowed me to use the Factory Method pattern to create instances of the specific PDA types based on the input file, using polymorphism to handle different PDA behaviors through a common interface.
+For the trace functionality, I added an optional output stream parameter to the `isAccepted` method in both PDA types. If trace mode is enabled, the current configuration (state, remaining input, stack content and posible transitions) is printed at each step of the computation. The trace was implemented **only** in the `PDAES` recursive isAccepted method, as it is more straightforward to show the recursive calls and stack changes. The PDAFS method could be extended similarly but it was not implemented cause time constraints.
+
+Finally, I implemented input and output strategies using the Strategy pattern. The `InputStrategy` interface defines a method for reading input strings, with concrete implementations for reading from the console (`ConsoleInputStrategy`) and from a file (`FileInputStrategy`). Similarly, the `OutputStrategy` interface defines a method for writing results, with implementations for writing to the console (`ConsoleOutputStrategy`) and to a file (`FileOutputStrategy`). This allows flexibility in how inputs are provided and results are displayed or stored. All inputs string must be read before processing them, and all results must be written after processing them.
 
 ## IA Use
 This project is self-made, but I used AI tools, in this case Copilot, to help me in the development of some parts of the code. Mainly for writing boilerplate code and for suggesting improvements in certain functions.

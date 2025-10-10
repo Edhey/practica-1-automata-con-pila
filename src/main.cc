@@ -17,48 +17,85 @@
 
 #include <fstream>
 #include <iostream>
+#include <memory>
 
+#include "IO/InputStrategy/console-input-strategy.h"
+#include "IO/InputStrategy/file-input-strategy.h"
+#include "IO/OutputStrategy/console-output-strategy.h"
+#include "IO/OutputStrategy/file-output-strategy.h"
 #include "PDAFactory/pda-factory.h"
 #include "Parser/args-parser.h"
 
-#define RED   "\033[31m"
-#define GREEN "\033[32m"
-#define RESET "\033[0m"
+/**
+ * @brief Creates the appropriate input strategy based on arguments
+ */
+std::unique_ptr<InputStrategy> createInputStrategy(const ArgsParser& args) {
+  if (args.hasInputStringsFile()) {
+    return std::make_unique<FileInputStrategy>(args.getInputStringsFile());
+  }
+  return std::make_unique<ConsoleInputStrategy>();
+}
 
+/**
+ * @brief Creates the appropriate output strategy based on arguments
+ */
+std::unique_ptr<OutputStrategy> createOutputStrategy(const ArgsParser& args) {
+  if (args.hasOutputFile()) {
+    return std::make_unique<FileOutputStrategy>(args.getOutputFile(),
+                                                args.isTraceEnabled());
+  }
+  return std::make_unique<ConsoleOutputStrategy>(args.isTraceEnabled());
+}
+
+/**
+ * @brief Processes input strings through the automaton
+ */
+void processInputs(PDA* pda, InputStrategy* input_strategy,
+                   OutputStrategy* output_strategy) {
+  auto inputs_opt = input_strategy->readInputs();
+
+  if (!inputs_opt.has_value()) {
+    std::cerr << "Error: Could not read inputs" << std::endl;
+    return;
+  }
+
+  const auto& inputs = inputs_opt.value();
+  auto trace_stream = output_strategy->getStream();
+
+  std::cout << "\nProcessing " << inputs.size() << " input string(s)...\n"
+            << std::endl;
+
+  for (const auto& input : inputs) {
+    bool accepted = pda->isAccepted(input, trace_stream);
+    output_strategy->writeResult(input, accepted);
+  }
+
+  output_strategy->finalize();
+}
+
+/**
+ * @brief Main entry point
+ */
 int main(int argc, char* argv[]) {
   auto args_opt = ArgsParser::parse(argc, argv);
   if (!args_opt.has_value()) {
-    return 1;  // Error en los argumentos
+    return 1;
   }
 
   ArgsParser args = args_opt.value();
 
-  std::cout << "Creating automaton: "
-            << AutomataTypeHelper::toString(args.getPDAType()) << std::endl;
-  std::cout << "Input file: " << args.getInputFile() << std::endl;
-
-  auto pda = PDAFactory::createAutomata(args.getPDAType(), args.getInputFile());
-
+  auto pda =
+      PDAFactory::createAutomata(args.getAutomataType(), args.getInputFile());
   if (!pda) {
     std::cerr << "Error: Could not create automaton" << std::endl;
     return 1;
   }
-
   std::cout << "Automaton created successfully!\n" << std::endl;
 
-  std::string input;
-  std::cout << "Enter input strings (q. to finish):" << std::endl;
+  auto input_strategy = createInputStrategy(args);
+  auto output_strategy = createOutputStrategy(args);
 
-  while (std::cin >> input) {
-    if (input == "q.") {
-      std::cout << "Exiting the simulator..." << std::endl;
-      break;
-    }
-    bool accepted = pda->isAccepted(input, std::cout);
-    std::cout << "String '" << input << "': "
-          << (accepted ? GREEN "ACCEPTED" RESET : RED "REJECTED" RESET)
-          << std::endl;
-  }
+  processInputs(pda.get(), input_strategy.get(), output_strategy.get());
 
   return 0;
 }
