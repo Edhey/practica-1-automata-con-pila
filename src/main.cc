@@ -54,7 +54,7 @@ int main(int argc, char* argv[]) {
       std::cout << "Exiting the simulator..." << std::endl;
       break;
     }
-    bool accepted = pda->isAccepted(input);
+    bool accepted = pda->isAccepted(input, std::cout);
     std::cout << "String '" << input << "': "
           << (accepted ? GREEN "ACCEPTED" RESET : RED "REJECTED" RESET)
           << std::endl;

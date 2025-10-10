@@ -18,6 +18,7 @@
 #ifndef PDA_H
 #define PDA_H
 
+#include <iomanip>
 #include <iostream>
 #include <map>
 #include <set>
@@ -48,7 +49,6 @@ public:
         stack_alphabet(),
         initial_stack_symbol(PDA::EPSILON) {}
   virtual ~PDA() = default;
-  virtual bool isAccepted(const std::string& string) = 0;
   void setStackAlphabet(const Alphabet<char>& alphabet) {
     stack_alphabet = alphabet;
   }
@@ -57,6 +57,12 @@ public:
   bool checkStackAlphabet(char symbol) {
     return stack_alphabet.contains(symbol);
   }
+  std::string stackToString(const std::stack<char>& stack) const;
+  std::ostream& printConfiguration(
+      std::ostream& out, const std::stack<char>& stack,
+      const State<PDATransitionKey, PDATransitionValue>& state,
+      const std::string& input, int depth) const;
+  std::ostream& printHeader(std::ostream& out) const;
 
 protected:
   std::stack<char> stack;
