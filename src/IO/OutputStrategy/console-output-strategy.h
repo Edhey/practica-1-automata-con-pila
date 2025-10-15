@@ -6,7 +6,7 @@
  * Curso: 4º
  * Práctica 1: Pushdown Automaton Simulator
  * @author Himar Edhey Hernández Alonso
- * Correo: alu0101552392@ull.edu.es
+ * @mail: alu0101552392@ull.edu.es
  * @date Oct 10 2025
  * @file console-output-strategy.h
  * @brief Console output strategy implementation
@@ -42,7 +42,7 @@ public:
               << (accepted ? GREEN "ACCEPTED" RESET : RED "REJECTED" RESET)
               << std::endl;
   }
-  
+
   void finalize() override { std::cout.flush(); }
 
 private:

@@ -6,7 +6,7 @@
  * Curso: 4º
  * Práctica 1: Pushdown Automaton Simulator
  * @author Himar Edhey Hernández Alonso
- * Correo: alu0101552392@ull.edu.es
+ * @mail: alu0101552392@ull.edu.es
  * @date Oct 10 2025
  * @file input-strategy.h
  * @brief Strategy pattern for reading input strings
@@ -27,7 +27,7 @@
 class InputStrategy {
 public:
   virtual ~InputStrategy() = default;
-  
+
   /**
    * @brief Reads input strings
    * @return Vector of input strings, or nullopt if error

@@ -6,7 +6,7 @@
  * Curso: 4º
  * Práctica 1: Pushdown Automaton Simulator
  * @author Himar Edhey Hernández Alonso
- * Correo: alu0101552392@ull.edu.es
+ * @mail: alu0101552392@ull.edu.es
  * @date Sep 15 2025
  * @file args-parser.cc
  * @brief Implementation of the class ArgsParser
@@ -34,7 +34,8 @@ void ArgsParser::printUsage() {
       << "  stack-automaton es automaton.txt\n"
       << "  stack-automaton fs automaton.txt -i strings.txt -o results.txt\n"
       << "  stack-automaton PDAES automaton.txt --trace\n"
-      << "  stack-automaton PDAFS automaton.txt -i strings.txt -t -o trace.txt\n"
+      << "  stack-automaton PDAFS automaton.txt -i strings.txt -t -o "
+         "trace.txt\n"
       << std::endl;
 }
 

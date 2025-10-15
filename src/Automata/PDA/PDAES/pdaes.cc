@@ -6,7 +6,7 @@
  * Curso: 4º
  * Práctica 1: Pushdown Automaton Simulator
  * @author Himar Edhey Hernández Alonso
- * Correo: alu0101552392@ull.edu.es
+ * @mail: alu0101552392@ull.edu.es
  * @date Sep 15 2025
  * @file pdaes.cc
  * @brief Implementation of the class PDAES, a Pushdown Automaton that accepts
@@ -57,7 +57,7 @@ bool PDAES::tryInputTransitions(
     std::optional<std::reference_wrapper<std::ostream>> trace, int depth) {
   if (input.empty())
     return false;
-  
+
   depth++;
   char current_symbol = input[0];
   PDATransitionKey key{current_symbol, stack_top};

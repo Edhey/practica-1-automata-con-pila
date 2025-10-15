@@ -6,7 +6,7 @@
  * Curso: 4º
  * Práctica 1: Pushdown Automaton Simulator
  * @author Himar Edhey Hernández Alonso
- * Correo: alu0101552392@ull.edu.es
+ * @mail: alu0101552392@ull.edu.es
  * @date Oct 06 2025
  * @file pdafs.cc
  * @brief Implementation of the class PDAFS
@@ -86,7 +86,8 @@ void PDAFS::processInputTransitions(std::queue<Configuration>& queue,
     State<PDATransitionKey, PDATransitionValue>* next_state =
         getStateById(transition.next_state_id);
     if (next_state != nullptr) {
-      queue.push(Configuration(next_state, new_stack, current.input_position + 1));
+      queue.push(
+          Configuration(next_state, new_stack, current.input_position + 1));
     }
   }
 }

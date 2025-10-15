@@ -6,7 +6,7 @@
  * Curso: 4º
  * Práctica 1: Pushdown Automaton Simulator
  * @author Himar Edhey Hernández Alonso
- * Correo: alu0101552392@ull.edu.es
+ * @mail: alu0101552392@ull.edu.es
  * @date Sep 15 2025
  * @file pda-parser.h
  * @brief Definition of the class PdaParser
@@ -82,8 +82,9 @@ protected:
       std::ifstream& file, int& line_number);
   std::expected<Alphabet<char>, ParseError> parseStackAlphabet(
       std::ifstream& file, int& line_number);
-  std::expected<char, ParseError> parseInitialStackSymbol(std::ifstream& file,
-                                                          int& line_number, const Alphabet<char>& stack_alphabet);
+  std::expected<char, ParseError> parseInitialStackSymbol(
+      std::ifstream& file, int& line_number,
+      const Alphabet<char>& stack_alphabet);
   std::expected<std::string, ParseError> parseInitialState(
       std::ifstream& file, int& line_number,
       const std::map<std::string, State<PDATransitionKey, PDATransitionValue>>&
@@ -94,8 +95,9 @@ protected:
           states,
       const Alphabet<char>* stack_alphabet,
       const Alphabet<char>* input_alphabet);
-  virtual std::expected<void, ParseError> parseSpecificData(
-      std::ifstream& file, int& line_number, PdaData& data) = 0;
+  virtual std::expected<void, ParseError> parseSpecificData(std::ifstream& file,
+                                                            int& line_number,
+                                                            PdaData& data) = 0;
 };
 
 #endif  // PARSER_PDA_PARSER_H_

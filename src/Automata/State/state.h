@@ -6,7 +6,7 @@
  * Curso: 4º
  * Práctica 1: Pushdown Automaton Simulator
  * @author Himar Edhey Hernández Alonso
- * Correo: alu0101552392@ull.edu.es
+ * @mail: alu0101552392@ull.edu.es
  * @date Sep 15 2025
  * @file state.h
  * @brief Definition of the class State
@@ -24,18 +24,17 @@
 
 /**
  * @brief Represents a state in an automaton with transitions.
- * 
+ *
  * @tparam KeyType Type used for transition keys.
  * @tparam ValueType Type used for transition values.
- * 
+ *
  * This class models a state in an automaton, supporting identification,
  * final/initial state flags, and a collection of transitions.
  */
 template <typename KeyType, typename ValueType>
 class State {
 public:
-  State(const std::string& id = "q-1")
-      : id_(id), transitions_() {}
+  State(const std::string& id = "q-1") : id_(id), transitions_() {}
   ~State() = default;
 
   bool operator<(const State& other) const { return id_ < other.id_; }
@@ -49,6 +48,7 @@ public:
   const std::multimap<KeyType, ValueType>& getTransitions() const {
     return transitions_;
   }
+
 private:
   std::string id_;
   std::multimap<KeyType, ValueType> transitions_;

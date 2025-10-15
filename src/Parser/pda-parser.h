@@ -6,7 +6,7 @@
  * Curso: 4º
  * Práctica 1: Pushdown Automaton Simulator
  * @author Himar Edhey Hernández Alonso
- * Correo: alu0101552392@ull.edu.es
+ * @mail: alu0101552392@ull.edu.es
  * @date Sep 15 2025
  * @file pda-parser.h
  * @brief Definition of the class PdaParser
@@ -18,16 +18,16 @@
 #ifndef PARSER_PDA_PARSER_H_
 #define PARSER_PDA_PARSER_H_
 
+#include <expected>
 #include <fstream>
 #include <ostream>
 #include <set>
 #include <sstream>
 #include <string>
 #include <vector>
-#include <expected>
 
-#include "../State/state.h"
 #include "../Automata/PDA/pda.h"
+#include "../State/state.h"
 
 /**
  * @brief Estructura para almacenar los datos parseados del autómata
@@ -61,10 +61,10 @@ public:
   explicit PdaParser(const std::string& file_name);
   ~PdaParser() = default;
 
-   std::expected<PdaData, ParseError> parse();
+  std::expected<PdaData, ParseError> parse();
 
 protected:
-  std::string file_name_; 
+  std::string file_name_;
   bool readNonCommentLine(std::ifstream& ifs, std::string& line);
   const std::vector<std::string>& tokenize(const std::string& line);
 };

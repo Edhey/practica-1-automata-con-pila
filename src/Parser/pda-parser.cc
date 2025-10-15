@@ -6,7 +6,7 @@
  * Curso: 4º
  * Práctica 1: Pushdown Automaton Simulator
  * @author Himar Edhey Hernández Alonso
- * Correo: alu0101552392@ull.edu.es
+ * @mail: alu0101552392@ull.edu.es
  * @date Sep 15 2025
  * @file pda-parser.cc
  * @brief Implementation of PdaParser class
@@ -25,14 +25,12 @@
  */
 bool PdaParser::readNonCommentLine(std::ifstream& ifs, std::string& line) {
   while (std::getline(ifs, line)) {
-
     size_t start = line.find_first_not_of(" \t\r\n");
     if (start == std::string::npos)
       continue;  // Empty line
 
     line = line.substr(start);
 
-  
     if (line[0] == '#')
       continue;  // Ignore comments
 

@@ -6,7 +6,7 @@
  * Curso: 4º
  * Práctica 1: Pushdown Automaton Simulator
  * @author Himar Edhey Hernández Alonso
- * Correo: alu0101552392@ull.edu.es
+ * @mail: alu0101552392@ull.edu.es
  * @date Sep 15 2025
  * @file pda.h
  * @brief Definition of the class PDA
@@ -28,25 +28,25 @@
 #include <vector>
 
 <<<<<<< HEAD
-#include "../Automata/automata.h"
 #include "../../State/state.h"
-=======
+#include "../Automata/automata.h"
+    =======
 #include "../Alphabet/alphabet.h"
 #include "../State/state.h"
 #include "../automata.h"
 #include "PDATransition/pda-transition.h"
->>>>>>> poo
+    >>>>>>> poo
 
-/**
- * @class PDA
- * @brief Represents a Pushdown Automaton (PDA), inheriting from Automata.
- *
- * This abstract class models a pushdown automaton, which is an automaton
- * equipped with a stack. It provides basic stack operations, stack alphabet
- * management, and enforces implementation of the acceptance condition for input
- * strings.
- */
-class PDA : public Automata<PDATransitionKey, PDATransitionValue> {
+    /**
+     * @class PDA
+     * @brief Represents a Pushdown Automaton (PDA), inheriting from Automata.
+     *
+     * This abstract class models a pushdown automaton, which is an automaton
+     * equipped with a stack. It provides basic stack operations, stack alphabet
+     * management, and enforces implementation of the acceptance condition for
+     * input strings.
+     */
+    class PDA : public Automata<PDATransitionKey, PDATransitionValue> {
 public:
   PDA()
       : Automata<PDATransitionKey, PDATransitionValue>(),
